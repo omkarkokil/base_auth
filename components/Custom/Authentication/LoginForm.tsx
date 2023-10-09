@@ -3,10 +3,12 @@
 import InputField from "@/components/Custom/InputField";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
+import { toast } from "@/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
@@ -25,6 +27,7 @@ const formSchema = z.object({
 const AuthForm = () => {
   const { data } = useSession();
   const router = useRouter();
+  const [isLoading, setisLoading] = useState(false);
   if (data?.user) {
     router.push("/home");
   }
@@ -37,15 +40,34 @@ const AuthForm = () => {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    const res = await signIn("credentials", {
-      redirect: false,
-      email: values.email,
-      password: values.password,
-    });
-    console.log(`🚀 ~ res:`, res);
-    if (res?.error) {
-      // toast.error("Something went wrong");
+    setisLoading(true);
+    try {
+      const res = await signIn("credentials", {
+        redirect: false,
+        email: values.email,
+        password: values.password,
+      });
+      if (res?.error) {
+        toast({
+          variant: "destructive",
+          title: "Invalid credentails",
+          description: "please check your credentails and try again",
+        });
+
+        if (res.ok) {
+          toast({
+            title: "Log in successfully",
+          });
+        }
+        // toast.error("Something went wrong");
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "something went wrong",
+      });
+    } finally {
+      setisLoading(false);
     }
   }
 
@@ -81,8 +103,12 @@ const AuthForm = () => {
             desc=" This is your public display password."
           />
 
-          <Button className="w-full text-white" type="submit">
-            Log in
+          <Button
+            className="w-full text-white"
+            disabled={isLoading}
+            type="submit"
+          >
+            {isLoading ? "Logginin" : "Log in"}
           </Button>
         </form>
       </Form>

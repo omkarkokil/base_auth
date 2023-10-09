@@ -56,7 +56,6 @@ export const authOptions: AuthOptions = {
                     email: token.email
                 }
             })
-
             if (!dbUser) {
                 token.id = user!.id
                 return token

@@ -83,7 +83,7 @@ const RegisterForm = () => {
             form={form}
             name="name"
             label="Name"
-            placeholder="Enter your name"
+            placeholder="Enter your Name"
             desc=" This is your public display name."
           />
 

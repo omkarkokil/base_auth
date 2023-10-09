@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --primary: 212 100% 47%;
+  --secondary: 270 67% 38%;
+  --success: 146 79% 26%;
+  --warning: 37 91% 55%;
+  --danger: 348 100% 55%;
+}

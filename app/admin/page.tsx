@@ -9,6 +9,7 @@ const admin = async () => {
     throw new Error("This page can only access by admin");
   }
 
+  
   return <div>Welcome to admin panel</div>;
 };
 
