@@ -91,15 +91,15 @@ const RegisterForm = () => {
           <InputField
             form={form}
             name="email"
-            label="email"
+            label="Email"
             type="email"
-            placeholder="Enter your email"
+            placeholder="Enter your Email"
             desc=" This is your public display email."
           />
           <InputField
             form={form}
             name="password"
-            label="password"
+            label="Password"
             type="password"
             placeholder="Enter your password"
             desc=" This is your public display password."

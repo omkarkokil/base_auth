@@ -54,12 +54,14 @@ const AuthForm = () => {
           description: "please check your credentails and try again",
         });
 
-        if (res.ok) {
-          toast({
-            title: "Log in successfully",
-          });
-        }
         // toast.error("Something went wrong");
+      }
+
+      if (res?.ok) {
+        toast({
+          title: "Log in successfully",
+          description: "You have successfully logged in",
+        });
       }
     } catch (error) {
       toast({
@@ -108,7 +110,18 @@ const AuthForm = () => {
             disabled={isLoading}
             type="submit"
           >
-            {isLoading ? "Logginin" : "Log in"}
+            {isLoading ? (
+              <div
+                className="inline-block h-5 w-5 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                role="status"
+              >
+                <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+                  Loading...
+                </span>
+              </div>
+            ) : (
+              "Log in"
+            )}
           </Button>
         </form>
       </Form>

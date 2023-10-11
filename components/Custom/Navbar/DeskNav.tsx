@@ -14,27 +14,35 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut } from "lucide-react";
+import { LogOut, UserCircle, UserCog } from "lucide-react";
+import { toast } from "@/components/ui/use-toast";
 
 const DeskNav = () => {
   const { data } = useSession();
 
   return (
-    <div className="flex items-center justify-between gap-4 px-4 h-[9vh] w-full">
-      <h1 className="text-xl tracking-tight font-bold">HERE LOGO</h1>
+    <div className="flex items-center    justify-between gap-4 px-4 h-[9vh] w-full">
+      <Link href={"/home"} className="text-xl tracking-tight font-bold">
+        HERE LOGO
+      </Link>
       <div className="space-x-6 flex  items-center ">
-        <Link href={"/admin"} className="text-sm">
+        <Link href={"/dashboard"} className="text-sm">
           Dashboard
         </Link>
         <Link href={"/driver"} className="text-sm">
           Driver
         </Link>
+        <Link href={"/sales"} className="text-sm">
+          Sales
+        </Link>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Avatar className=" cursor-pointer">
-              <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-              <AvatarFallback>CN</AvatarFallback>
+              <AvatarImage src={""} alt="@shadcn" />
+              <AvatarFallback className="text-primary hover:bg-primary hover:text-gray-50 transition-all">
+                <UserCog className="h-5" />
+              </AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="mr-6 ">
@@ -45,8 +53,12 @@ const DeskNav = () => {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <div onClick={() => signOut()}>
-              <DropdownMenuItem className="hover:!bg-red-500 hover:!text-white">
+            <div
+              onClick={() => {
+                signOut();
+              }}
+            >
+              <DropdownMenuItem className="hover:!bg-red-500 cursor-pointer hover:!text-white">
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Log out</span>
               </DropdownMenuItem>

@@ -58,7 +58,7 @@ export function DriverModal({ id }: { id: string }) {
   });
 
   return (
-    <DialogContent className="bg-white sm:max-w-[600px]">
+    <DialogContent className="  bg-white sm:max-w-[600px]">
       <DialogHeader className="pb-4">
         <DialogTitle>Assign driver</DialogTitle>
         <DialogDescription>
