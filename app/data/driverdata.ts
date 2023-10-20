@@ -64,17 +64,7 @@ export const data: Payment[] = [
 
     email: "ken99@yahoo.com",
   },
-  {
-    id: "3u1reuv4",
-    name: "Rajesh driver",
-    status: "availabel",
-    trName: "Virat kohli",
-    activity: "Treking",
-    date: new Date().toISOString(),
-    time: "10:00",
 
-    email: "Abe45@gmail.com",
-  },
   {
     id: "derv1ws0",
     name: "Rajesh chaman",
