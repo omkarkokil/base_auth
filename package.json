@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "postinstall": "prisma genrate"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.1",
@@ -38,6 +39,7 @@
     "react-day-picker": "^8.8.2",
     "react-dom": "^18",
     "react-hook-form": "^7.47.0",
+    "react-phone-input-2": "^2.15.1",
     "react-select": "^5.7.7",
     "tailwind-merge": "^1.14.0",
     "tailwindcss-animate": "^1.0.7",

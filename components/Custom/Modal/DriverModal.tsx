@@ -25,7 +25,6 @@ import { format } from "date-fns";
 import { CalendarIcon, CarTaxiFront } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import SearchSelect from "../Select/SearchSelect";
-import { Payment } from "@/app/driver/components/DriverTable";
 
 export function DriverModal({ id }: { id: string }) {
   const [open, setOpen] = useState(false);

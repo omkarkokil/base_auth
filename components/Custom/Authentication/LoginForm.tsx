@@ -1,6 +1,6 @@
 "use client";
 
-import InputField from "@/components/Custom/InputField";
+import InputField from "@/components/Custom/Input/InputField";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { toast } from "@/components/ui/use-toast";

@@ -21,9 +21,9 @@ const DeskNav = () => {
   const { data } = useSession();
 
   return (
-    <div className="flex items-center    justify-between gap-4 px-4 h-[9vh] w-full">
-      <Link href={"/home"} className="text-xl tracking-tight font-bold">
-        HERE LOGO
+    <div className="flex items-center justify-between gap-4 px-4 h-[8vh] w-full">
+      <Link href={"/home"} className="text-xl tracking-tight font-semibold">
+        LOGO
       </Link>
       <div className="space-x-6 flex  items-center ">
         <Link href={"/dashboard"} className="text-sm">

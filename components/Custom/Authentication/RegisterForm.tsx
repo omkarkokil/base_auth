@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import * as z from "zod";
-import InputField from "../InputField";
+import InputField from "../Input/InputField";
 import AuthSelect from "../Select/AuthSelect";
 
 const formSchema = z

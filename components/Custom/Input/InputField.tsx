@@ -8,7 +8,7 @@ interface typesOfVal {
   password: string;
 }
 
-interface InputProps {
+export interface InputProps {
   label: string;
   name: string;
   placeholder?: string;

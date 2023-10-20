@@ -1,4 +1,4 @@
-import { Payment } from "../driver/components/DriverTable"
+import { Payment } from "../(routes)/driver/components/DriverTable";
 
 export const data: Payment[] = [
   {
