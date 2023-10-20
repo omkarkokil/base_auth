@@ -28,13 +28,10 @@ import SearchSelect from "../Select/SearchSelect";
 
 export function DriverModal({ id }: { id: string }) {
   const [open, setOpen] = useState(false);
-  const getValues = useMemo(
-    () =>
-      data.find((items) => {
-        return items.id === id;
-      }),
-    []
-  );
+
+  const getValues = data?.find((items) => {
+    return items.id === id;
+  });
 
   const newDate = new Date(getValues?.date as any);
   const [date, setDate] = useState(newDate);
