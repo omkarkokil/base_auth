@@ -14,7 +14,7 @@ import { InputProps } from "./InputField";
 import { Phone } from "lucide-react";
 
 type PhoneAddtional = {
-  state: string;
+  state?: string;
 };
 
 const PhoneNumberInput: FC<InputProps & PhoneAddtional> = ({
