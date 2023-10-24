@@ -23,7 +23,10 @@ import {
   Palmtree,
   Timer,
   TramFront,
+  Trash2,
   UserCircle,
+  UserCog2,
+  UserPlus2,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -53,24 +56,25 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { DriverModal } from "@/components/Custom/Modal/DriverModal";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { Payment } from "../../../../components/Custom/Table/SalesTable";
+import Link from "next/link";
+import { SalesGuestModal } from "@/components/Custom/Modal/Sales/SalesGuestModal";
+
+export type Payment = {
+  id: string;
+  email: string;
+  status: string;
+  name: string;
+  trName: string;
+  activity: string;
+  time: string;
+  date: string;
+};
 
 export const columns: ColumnDef<Payment>[] = [
   {
-    accessorKey: "date",
-    header: "Date",
-    cell: ({ row }) => (
-      <div className="flex items-center gap-2">
-        <Calendar className="h-4 text-primary" />
-        <div>{format(new Date(row.getValue("date")), "PP")}</div>
-      </div>
-    ),
-  },
-  {
     accessorKey: "trName",
-    header: () => <div className="text-left">Tourist Name</div>,
+    header: () => <div className="text-left">Guest Name</div>,
     cell: ({ row }) => {
       return (
         <div className="flex items-center  gap-2">
@@ -83,13 +87,34 @@ export const columns: ColumnDef<Payment>[] = [
     },
   },
   {
+    accessorKey: "date",
+    header: "Filed Date",
+    cell: ({ row }) => (
+      <div className="flex items-center gap-2">
+        <Calendar className="h-4 text-primary" />
+        <div>{format(new Date(row.getValue("date")), "PP")}</div>
+      </div>
+    ),
+  },
+  {
+    accessorKey: "date",
+    header: "Booked Date",
+    cell: ({ row }) => (
+      <div className="flex items-center gap-2">
+        <Calendar className="h-4 text-primary" />
+        <div>{format(new Date(row.getValue("date")), "PP")}</div>
+      </div>
+    ),
+  },
+
+  {
     accessorKey: "id",
     header: () => null,
     cell: () => null,
   },
   {
     accessorKey: "activity",
-    header: () => <div className="text-left">Activity</div>,
+    header: () => <div className="text-left">Diffent Activity</div>,
     cell: ({ row }) => {
       return (
         <div className="flex items-center  gap-2">
@@ -106,23 +131,6 @@ export const columns: ColumnDef<Payment>[] = [
             )}
           </div>
         </div>
-
-        // <div className="font-medium w-max">
-        //   <Badge
-        //     variant={"outline"}
-        //     className={`
-        //      ${
-        //        row.getValue("activity") === "Treking"
-        //          ? "text-success hover:!text-success"
-        //          : row.getValue("activity") === "Water Sports"
-        //          ? "text-primary"
-        //          : "text-danger border-[0.5px] border-danger hover:!text-danger"
-        //      }
-        //     cursor-pointer w-max`}
-        //   >
-        //     {row.getValue("activity")}
-        //   </Badge>
-        // </div>
       );
     },
   },
@@ -131,50 +139,7 @@ export const columns: ColumnDef<Payment>[] = [
     header: () => "",
     cell: () => "",
   },
-  {
-    accessorKey: "name",
-    header: () => <div className="text-left">Driver Name</div>,
-    cell: ({ row }) => {
-      return (
-        <div className="flex items-center gap-2 font-medium">
-          <CarTaxiFront className="h-4 text-warning" />
-          {/* <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <div
-                  className={`rounded-full h-[.65rem] w-[.65rem] border-[.5px] shadow-xl  ${
-                    row.getValue("status") === "not on work"
-                      ? "bg-red-500"
-                      : row.getValue("status") === "engage"
-                      ? "bg-warning"
-                      : row.getValue("status") === "availabel"
-                      ? "bg-success"
-                      : "bg-black"
-                  }  `}
-                ></div>
-                <TooltipContent>
-                  <p>{row.getValue("status")}</p>
-                </TooltipContent>
-              </TooltipTrigger>
-            </Tooltip>
-          </TooltipProvider> */}
-          {row.getValue("name")}
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "time",
-    header: () => <div className="text-left w-max">Time to pick</div>,
-    cell: ({ row }) => {
-      return (
-        <div className="flex items-center gap-1">
-          <Timer className="h-4  text-success" />
-          {row.getValue("time")}
-        </div>
-      );
-    },
-  },
+
   //   {
   //     accessorKey: "email",
   //     header: ({ column }) => {
@@ -197,39 +162,40 @@ export const columns: ColumnDef<Payment>[] = [
     cell: ({ row }) => {
       const payment = row.original;
       return (
-        <Dialog modal={true}>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only ">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(payment.id)}
-              >
-                Copy user ID
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only ">Open menu</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuItem
+              onClick={() => navigator.clipboard.writeText(payment.id)}
+            >
+              Copy user ID
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+
+            <Link href={"/sales/1"}>
+              <DropdownMenuItem className="pr-10 cursor-pointer hover:!bg-primary hover:!text-white">
+                <UserCog2 className="mr-2 h-4 w-4" />
+                <span>Update Guest data</span>
               </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DialogTrigger className="flex items-center">
-                <DropdownMenuItem className="pr-10 cursor-pointer hover:!bg-warning hover:!text-white">
-                  <CarTaxiFront className="mr-2 h-4 w-4" />
-                  <span>Assign the driver</span>
-                </DropdownMenuItem>
-              </DialogTrigger>
-              <DropdownMenuItem>View payment details</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <DriverModal id={row.getValue("id")} />
-        </Dialog>
+            </Link>
+            <DropdownMenuItem className="pr-10 cursor-pointer hover:!bg-danger hover:!text-white">
+              <Trash2 className="mr-2 h-4 w-4" />
+              Delete Guest data
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       );
     },
   },
 ];
 
-export function DriverTable() {
+export function SalesTable() {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -258,8 +224,8 @@ export function DriverTable() {
   });
 
   return (
-    <div className="w-full">
-      <div className="flex items-center py-4">
+    <div className="w-full ">
+      <div className="flex w-full justify-between items-center py-4">
         <Input
           placeholder="Filter by tourist name..."
           value={(table.getColumn("trName")?.getFilterValue() as string) ?? ""}
@@ -296,9 +262,18 @@ export function DriverTable() {
               })}
           </DropdownMenuContent>
         </DropdownMenu> */}
+
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button className="bg-primary hover:bg-primary">
+              <UserPlus2 /> Add new guest
+            </Button>
+          </DialogTrigger>
+          <SalesGuestModal id={"1"} />
+        </Dialog>
       </div>
       <div className="rounded-md border">
-        <Table>
+        <Table className="bg-white">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow className="bg-slate-100" key={headerGroup.id}>

@@ -49,3 +49,49 @@ model Account {
 
   @@unique([provider, providerAccountId])
 }
+
+model Guest {
+  id              String @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  email           String?   @unique
+  contact         String? 
+  // filledDate      String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  guestInfo GuestInfo?
+}
+
+enum channel{
+  Custom
+  Guest
+  Brochure
+  Website
+  B2B
+}
+enum vip{
+  mid
+  reg
+  high
+  low
+}
+
+model GuestInfo {
+   id              String @id @default(auto()) @map("_id") @db.ObjectId
+   FormFillingDate DateTime
+   Channel channel
+   service String
+   category String
+   vip vip
+   dateOfArrival DateTime
+   timeOfArrival DateTime
+   dateOfDeparture DateTime
+   timeOfDeparture DateTime
+   adult String
+   adult12 String
+   ch512 String
+   ch35 String
+   infant String
+   total String
+   guestId String? @db.ObjectId @unique
+   guest Guest? @relation( fields: [guestId] ,  references: [id])
+}

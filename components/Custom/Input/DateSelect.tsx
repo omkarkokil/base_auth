@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { FC, useState } from "react";
 import {
   Popover,
   PopoverContent,
@@ -12,12 +12,17 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 
-const DateSelect = () => {
+type DateProps = {
+  label: string;
+  date: any;
+  setDate: React.Dispatch<React.SetStateAction<any>>;
+};
+
+const DateSelect: FC<DateProps> = ({ label, date, setDate }) => {
   const newDate = new Date();
-  const [date, setDate] = useState();
   return (
     <div className="flex justify-start items-start flex-col gap-4">
-      <Label htmlFor="username">Date of pickup</Label>
+      <Label htmlFor="username">{label}</Label>
       <Popover>
         <PopoverTrigger asChild>
           <Button
@@ -35,7 +40,7 @@ const DateSelect = () => {
           <Calendar
             mode="single"
             selected={date}
-            onSelect={setDate as any}
+            onSelect={setDate}
             initialFocus
           />
         </PopoverContent>

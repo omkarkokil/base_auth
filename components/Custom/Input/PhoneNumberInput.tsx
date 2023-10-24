@@ -11,14 +11,19 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { InputProps } from "./InputField";
+import { Phone } from "lucide-react";
 
-const PhoneNumberInput: FC<InputProps> = ({
+type PhoneAddtional = {
+  state: string;
+};
+
+const PhoneNumberInput: FC<InputProps & PhoneAddtional> = ({
   label,
   form,
   name,
   placeholder,
-  type = "text",
-  desc,
+  state,
+  onChange,
 }) => {
   return (
     <>
@@ -27,18 +32,24 @@ const PhoneNumberInput: FC<InputProps> = ({
         name={name}
         render={({ field }) => (
           <FormItem className="h-min">
-            <FormLabel>{label}</FormLabel>
+            <FormLabel
+            // className={`${!state ? "text-danger" : "text-black"}`}
+            >
+              {label}
+            </FormLabel>
             <FormControl autoCorrect="off">
               <PhoneInput
-                country={"us"}
+                country={"in"}
                 inputStyle={{ width: "100%", borderColor: "#e5e7eb" }}
                 specialLabel="Enter Phone number of guest"
                 placeholder={placeholder}
-                {...field}
+                onChange={(phone) => {
+                  onChange && onChange(name, phone);
+                }}
               />
             </FormControl>
 
-            <FormMessage />
+            {/* <FormMessage /> */}
           </FormItem>
         )}
       />

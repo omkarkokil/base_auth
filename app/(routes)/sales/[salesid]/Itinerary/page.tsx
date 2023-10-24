@@ -1,29 +1,29 @@
 import DeskNav from "@/components/Custom/Navbar/DeskNav";
-import React from "react";
 import { ArrowLeftCircle } from "lucide-react";
 import Link from "next/link";
-import { SalesTable } from "../../../components/Custom/Table/SalesTable";
+import React from "react";
+import SalesForm from "../Components/Form1/SalesForm";
+import { Iternairyform } from "../Components/Form2/Iternairyform";
 
-const page = () => {
+const Itinerary = () => {
   return (
     <>
       <DeskNav />
       <div className=" bg-sky-100 py-4">
         <div className="flex gap-4 px-8 items-center">
-          <Link href={"/home"}>
+          <Link href={"/sales/1"}>
             <ArrowLeftCircle className="h-5 cursor-pointer hover:translate-x-[-5px] hover:text-sky-400 transition-all" />
           </Link>
-          <h1 className="text-lg  font-semibold">Sales Requisition Section</h1>
+          <h1 className="text-lg  font-semibold">
+            Itinerary or Day Plans Form
+          </h1>
         </div>
-        {/* <p className="mt-2 px-8  text-sm">
-          This is the sales requisition form from sales team
-        </p> */}
       </div>
-      <div className="px-8 py-4 bg-gray-50">
-        <SalesTable />
+      <div className="px-8 ">
+        <Iternairyform />
       </div>
     </>
   );
 };
 
-export default page;
+export default Itinerary;

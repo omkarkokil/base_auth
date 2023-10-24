@@ -15,6 +15,8 @@ export interface InputProps {
   desc?: string;
   type?: string;
   form?: UseFormReturn | any;
+  setState?: React.Dispatch<React.SetStateAction<StateInputProps>>;
+  onChange?: (name: string, value: string) => void;
 }
 
 import {
@@ -26,6 +28,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { UseFormReturn } from "react-hook-form";
+import { StateInputProps } from "@/app/(routes)/sales/[salesid]/Components/Form1/SalesForm";
 
 const InputField: FC<InputProps> = ({
   label,
@@ -34,6 +37,8 @@ const InputField: FC<InputProps> = ({
   placeholder,
   type = "text",
   desc,
+  setState,
+  onChange,
 }) => {
   return (
     <div>
@@ -43,7 +48,12 @@ const InputField: FC<InputProps> = ({
         render={({ field }) => (
           <FormItem className="h-min">
             <FormLabel>{label}</FormLabel>
-            <FormControl autoCorrect="off">
+            <FormControl
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                onChange && onChange(name, e.target.value)
+              }
+              autoCorrect="off"
+            >
               <Input
                 className="dark:focus:ring-white "
                 type={type}

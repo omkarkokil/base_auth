@@ -21,6 +21,10 @@ export default function RootLayout({
       <body className={inter.className}>
         <AuthContext>{children}</AuthContext>
         <Toaster />
+
+        <script src="https://unpkg.com/react@16.3.1/umd/react.development.js"></script>
+        <script src="https://unpkg.com/react-beautiful-dnd@x.x.x/dist/react-beautiful-dnd.js"></script>
+        <script src="https://unpkg.com/react-dom@16.3.1/umd/react-dom.development.js"></script>
       </body>
     </html>
   );

@@ -2,7 +2,7 @@ import { usePathname } from "next/navigation";
 import { useMemo } from "react";
 
 
-const useRoutes = () => {
+export const useRoutes = () => {
     const pathname = usePathname()
 
     const routes = useMemo(() => [
