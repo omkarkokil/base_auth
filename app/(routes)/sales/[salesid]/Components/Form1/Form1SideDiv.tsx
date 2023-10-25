@@ -19,6 +19,7 @@ type SideProps = {
   departureValue?: string;
   vipValue?: string;
   channel?: string;
+  total?: number;
 };
 
 const Form1SideDiv: FC<SideProps> = ({
@@ -30,9 +31,8 @@ const Form1SideDiv: FC<SideProps> = ({
   departureValue,
   vipValue,
   channel,
+  total,
 }) => {
-
-        
   return (
     <section className="flex flex-col  w-[50%]  py-5">
       {!filledData &&
@@ -244,26 +244,23 @@ const Form1SideDiv: FC<SideProps> = ({
                   <p>{state.infant}</p>
                 </>
               )}
-              {state.total && (
-                <>
-                  <p className="font-semibold">Total: -</p>
-                  <p>{state.total}</p>
-                </>
-              )}
+
+              {state.infant &&
+                state.ch35 &&
+                state.ch512 &&
+                state.adult &&
+                state.adult12 && (
+                  <>
+                    <p className="font-semibold">Total: -</p>
+                    <p>{total}</p>
+                  </>
+                )}
             </article>
           ) : (
             ""
           )}
         </aside>
       )}
-
-      {/* {value && `Selected Channel ${value}`}
-      {formFilledDate && (
-        <>
-          <p>Form Filled Date</p>
-          <p>{format(new Date(formFilledDate), "PP")}</p>
-        </>
-      )} */}
     </section>
   );
 };

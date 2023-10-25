@@ -61,12 +61,12 @@ export type StateInputProps = {
   guest: string;
   contact: string;
   category: string;
-  adult: string;
-  adult12: string;
-  ch512: string;
-  ch35: string;
-  infant: string;
-  total: string;
+  adult: number | null;
+  adult12: number | null;
+  ch512: number | null;
+  ch35: number | null;
+  infant: number | null;
+  total: number | null;
 };
 
 const SalesForm = () => {
@@ -81,23 +81,24 @@ const SalesForm = () => {
 
   const VIPData: string[] = ["High", "Mid", "Low", "Reg"];
 
-  /* ---------------------------- TimeArrival state --------------------------- */
-  const [arrivalValue, setArrivalValue] = useState("");
-  const [openArrivalTime, setOpenArrivalTime] = useState(false);
-  /* ---------------------------- TimeArrival state --------------------------- */
-
-  /* -------------------------  TimeDeparture state ------------------------- */
+  
+  
+  
+  
   const [departureValue, setDepartureValue] = useState("");
-  const [openDepartureTime, setOpenDepartureTime] = useState(false);
-  /* -------------------------  TimeDeparture state ------------------------- */
-
-  /* -------------------------------- Vip State ------------------------------- */
   const [vipValue, setVipValue] = useState("");
-  const [openVip, setOpenVip] = useState(false);
-  /* -------------------------------- Vip State ------------------------------- */
-
+  const [arrivalValue, setArrivalValue] = useState("");
   const [value, setValue] = useState("");
+  const [category, setCategory] = useState("");
+  const [guestType, setGuestType] = useState("");
+  
+  
+  const [openDepartureTime, setOpenDepartureTime] = useState(false);
+  const [openArrivalTime, setOpenArrivalTime] = useState(false);
   const [open, setOpen] = useState(false);
+  const [categoryOpen, setCateOpengory] = useState(false);
+  const [openVip, setOpenVip] = useState(false);
+  const [guestTypeOpen, setguestTypeOpen] = useState(false);
 
   const [inputValues, setInputValues] = useState<StateInputProps>({
     assignedTo: "",
@@ -106,14 +107,21 @@ const SalesForm = () => {
     guest: "",
     contact: "",
     category: "",
-    adult: "",
-    adult12: "",
-    ch512: "",
-    ch35: "",
-    infant: "",
-    total: "",
+    adult: null,
+    adult12: null,
+    ch512: null,
+    ch35: null,
+    infant: null,
+    total: null,
     // ... add other fields as needed
   });
+
+  let total =
+    Number(inputValues.adult) +
+    Number(inputValues.adult12) +
+    Number(inputValues.ch35) +
+    Number(inputValues.ch512) +
+    Number(inputValues.infant);
 
   /**
    * UseFormHook
@@ -253,7 +261,34 @@ const SalesForm = () => {
                   desc=" This is your public display service."
                 />
 
-                <InputField
+                <div className="flex gap-2 w-full items-center">
+                  <div className="w-[50%]">
+                    <SearchSelect
+                      label={"Category"}
+                      placeholder={"select Category... "}
+                      data={["ENT", "UPP", "DLX", "LUX", "GLUX"]}
+                      value={category}
+                      setValue={setCategory}
+                      icon={CalendarIcon}
+                      open={categoryOpen}
+                      setOpen={setCateOpengory}
+                    />
+                  </div>
+                  <div className="w-[50%]">
+                    <SearchSelect
+                      label={"Guest Type"}
+                      placeholder={"select Guest Type... "}
+                      data={["R", "Y", "G", "W"]}
+                      value={guestType}
+                      setValue={setGuestType}
+                      icon={CalendarIcon}
+                      open={guestTypeOpen}
+                      setOpen={setguestTypeOpen}
+                    />
+                  </div>
+                </div>
+
+                {/* <InputField
                   form={form}
                   name="category"
                   label="Enter Category"
@@ -261,7 +296,8 @@ const SalesForm = () => {
                   onChange={handleInputChange}
                   placeholder="category..."
                   desc="This is your public display category."
-                />
+                /> */}
+
                 <SearchSelect
                   label={"Select VIP Courtesy"}
                   placeholder={"vip..."}
@@ -320,6 +356,7 @@ const SalesForm = () => {
                 <InputField
                   form={form}
                   name="adult"
+                  type="number"
                   label="Enter Adult"
                   placeholder="adult..."
                   setState={setInputValues}
@@ -329,6 +366,7 @@ const SalesForm = () => {
                 <InputField
                   form={form}
                   name="adult12"
+                  type="number"
                   label="Adult 12+"
                   placeholder="adult12..."
                   setState={setInputValues}
@@ -338,6 +376,7 @@ const SalesForm = () => {
                 <InputField
                   form={form}
                   name="ch512"
+                  type="number"
                   label="Ch 5 - 12"
                   placeholder="ch5-12..."
                   setState={setInputValues}
@@ -347,6 +386,7 @@ const SalesForm = () => {
                 <InputField
                   form={form}
                   name="ch35"
+                  type="number"
                   label="Ch 3 - 5"
                   placeholder="ch3-5..."
                   setState={setInputValues}
@@ -356,21 +396,23 @@ const SalesForm = () => {
                 <InputField
                   form={form}
                   name="infant"
+                  type="number"
                   label="Infant"
                   placeholder="infant..."
                   setState={setInputValues}
                   onChange={handleInputChange}
                   desc="This is your public display infant."
                 />
-                <InputField
+                {/* <InputField
                   form={form}
                   name="total"
+                  type="number"
                   label="Enter total"
                   placeholder="total..."
                   setState={setInputValues}
                   onChange={handleInputChange}
                   desc="This is your public display infant."
-                />
+                /> */}
                 <Button
                   className=" text-white px-10"
                   disabled={
@@ -422,6 +464,7 @@ const SalesForm = () => {
           vipValue={vipValue}
           channel={value}
           state={inputValues}
+          total={total}
         />
         <Indicator />
       </section>

@@ -29,6 +29,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { UseFormReturn } from "react-hook-form";
 import { StateInputProps } from "@/app/(routes)/sales/[salesid]/Components/Form1/SalesForm";
+import { number } from "zod";
 
 const InputField: FC<InputProps> = ({
   label,
@@ -60,7 +61,16 @@ const InputField: FC<InputProps> = ({
                 autoComplete="off"
                 autoCorrect="off"
                 placeholder={placeholder}
-                {...field}
+                value={field.value}
+                min={1}
+                max={100}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  if (type === "number") {
+                    form.setValue(name, parseFloat(e.target.value));
+                  } else {
+                    form.setValue(name, e.target.value);
+                  }
+                }}
               />
             </FormControl>
 

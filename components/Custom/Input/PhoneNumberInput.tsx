@@ -43,13 +43,15 @@ const PhoneNumberInput: FC<InputProps & PhoneAddtional> = ({
                 inputStyle={{ width: "100%", borderColor: "#e5e7eb" }}
                 specialLabel="Enter Phone number of guest"
                 placeholder={placeholder}
+                value={field.value}
                 onChange={(phone) => {
+                  form.setValue(name, phone);
                   onChange && onChange(name, phone);
                 }}
               />
             </FormControl>
 
-            {/* <FormMessage /> */}
+            <FormMessage />
           </FormItem>
         )}
       />
