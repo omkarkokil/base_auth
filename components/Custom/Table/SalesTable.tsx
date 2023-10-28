@@ -16,6 +16,7 @@ import {
 } from "@tanstack/react-table";
 import {
   ArrowUpDown,
+  Award,
   Calendar,
   CarTaxiFront,
   ChevronDown,
@@ -59,6 +60,11 @@ import {
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import Link from "next/link";
 import { SalesGuestModal } from "@/components/Custom/Modal/Sales/SalesGuestModal";
+import { getGuestList } from "@/actions/getGuestAction";
+import { Guest, GuestInfo } from "@prisma/client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "@/components/ui/use-toast";
 
 export type Payment = {
   id: string;
@@ -71,141 +77,192 @@ export type Payment = {
   date: string;
 };
 
-export const columns: ColumnDef<Payment>[] = [
-  {
-    accessorKey: "trName",
-    header: () => <div className="text-left">Guest Name</div>,
-    cell: ({ row }) => {
-      return (
-        <div className="flex items-center  gap-2">
-          <UserCircle className="h-4 text-secondary" />
-          <div className="text-center font-medium">
-            {row.getValue("trName")}
+interface guestProps {
+  guestList: Guest[];
+  Guest: (id: string) => string[] | any;
+}
+
+const SalesTable: React.FC<guestProps> = ({ guestList, Guest }) => {
+  const router = useRouter();
+
+  const [open, setOpen] = useState(false);
+
+  const CheckGuest = async (id: string) => {
+    const data = await Guest(id);
+    if (data.guestInfo.length <= 0) {
+      router.push(`/sales/${id}/GuestInfo`);
+    } else {
+      router.push(`/sales/${id}`);
+    }
+  };
+  const DeleteGuest = async (id: string) => {
+    const res = await fetch(`/api/guest/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!res.ok) {
+      toast({
+        title: "Sales requisition form is not deleted server error",
+        variant: "destructive",
+      });
+    }
+
+    if (res.ok) {
+      router.refresh();
+      toast({
+        title: "Sales requisition form deleted successfully",
+        variant: "default",
+      });
+      return res.json();
+    }
+  };
+  const columns: ColumnDef<Guest>[] = [
+    {
+      accessorKey: "name",
+      header: () => <div className="text-left">Guest Name</div>,
+      cell: ({ row }) => {
+        return (
+          <div className="flex items-center  gap-2">
+            <UserCircle className="h-4 text-secondary" />
+            <div className="text-center font-medium">
+              {row.getValue("name")}
+            </div>
           </div>
-        </div>
-      );
+        );
+      },
     },
-  },
-  {
-    accessorKey: "date",
-    header: "Filed Date",
-    cell: ({ row }) => (
-      <div className="flex items-center gap-2">
-        <Calendar className="h-4 text-primary" />
-        <div>{format(new Date(row.getValue("date")), "PP")}</div>
-      </div>
-    ),
-  },
-  {
-    accessorKey: "date",
-    header: "Booked Date",
-    cell: ({ row }) => (
-      <div className="flex items-center gap-2">
-        <Calendar className="h-4 text-primary" />
-        <div>{format(new Date(row.getValue("date")), "PP")}</div>
-      </div>
-    ),
-  },
+    {
+      accessorKey: "filledDate",
+      header: "Filed Date",
+      cell: ({ row }) => (
+        <div className="flex items-center gap-2">
+          <Calendar className="h-4 text-primary" />
+          <div>{format(new Date(row.getValue("filledDate")), "PP")}</div>
+        </div>
+      ),
+    },
+    {
+      accessorKey: "bookedDate",
+      header: "Booked Date",
+      cell: ({ row }) => (
+        <div className="flex items-center gap-2">
+          <Calendar className="h-4 text-primary" />
+          <div>{format(new Date(row.getValue("bookedDate")), "PP")}</div>
+        </div>
+      ),
+    },
 
-  {
-    accessorKey: "id",
-    header: () => null,
-    cell: () => null,
-  },
-  {
-    accessorKey: "activity",
-    header: () => <div className="text-left">Diffent Activity</div>,
-    cell: ({ row }) => {
-      return (
-        <div className="flex items-center  gap-2">
-          <Palmtree
-            className={`h-4 ${
-              row.getValue("activity") ? "text-success" : "text-danger"
-            }`}
-          />
-          <div className="text-center font-medium">
-            {row.getValue("activity") ? (
-              row.getValue("activity")
-            ) : (
-              <p className="text-danger">Not yet fixed</p>
-            )}
+    {
+      accessorKey: "id",
+      header: () => null,
+      cell: () => null,
+    },
+    {
+      accessorKey: "points",
+      header: () => <div className="text-left">Points</div>,
+      cell: ({ row }) => {
+        return (
+          <div className="flex items-center  gap-2">
+            <Award className={`h-4 text-warning`} />
+            <div className="text-center font-medium">
+              {row.getValue("points")}
+            </div>
           </div>
-        </div>
-      );
+        );
+      },
     },
-  },
-  {
-    accessorKey: "status",
-    header: () => "",
-    cell: () => "",
-  },
+    {
+      accessorKey: "status",
+      header: () => "",
+      cell: () => "",
+    },
 
-  //   {
-  //     accessorKey: "email",
-  //     header: ({ column }) => {
-  //       return (
-  //         <Button
-  //           variant="ghost"
-  //           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-  //         >
-  //           Email
-  //           <ArrowUpDown className="ml-2 h-4 w-4" />
-  //         </Button>
-  //       );
-  //     },
-  //     cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
-  //   },
+    //   {
+    //     accessorKey: "email",
+    //     header: ({ column }) => {
+    //       return (
+    //         <Button
+    //           variant="ghost"
+    //           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+    //         >
+    //           Email
+    //           <ArrowUpDown className="ml-2 h-4 w-4" />
+    //         </Button>
+    //       );
+    //     },
+    //     cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
+    //   },
 
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const payment = row.original;
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only ">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
-            >
-              Copy user ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-
-            <Link href={"/sales/1"}>
-              <DropdownMenuItem className="pr-10 cursor-pointer hover:!bg-primary hover:!text-white">
-                <UserCog2 className="mr-2 h-4 w-4" />
-                <span>Update Guest data</span>
+    {
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row }) => {
+        const payment = row.original;
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only ">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Add Actions</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => CheckGuest(row.original.id)}
+                className="pr-10 cursor-pointer hover:!bg-primary hover:!text-white"
+              >
+                <UserPlus2 className="mr-2 h-4 w-4" />
+                <span>Add form data</span>
               </DropdownMenuItem>
-            </Link>
-            <DropdownMenuItem className="pr-10 cursor-pointer hover:!bg-danger hover:!text-white">
-              <Trash2 className="mr-2 h-4 w-4" />
-              Delete Guest data
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
-  },
-];
+              <DropdownMenuSeparator />
+              <DropdownMenuLabel>Change Actions</DropdownMenuLabel>
 
-export function SalesTable() {
+              <DropdownMenuItem className="pr-10 cursor-pointer hover:!bg-success hover:!text-white">
+                <Dialog modal={true} open={open} onOpenChange={setOpen}>
+                  <DialogTrigger asChild>
+                    <div className=" flex items-center">
+                      <UserCog2 className="mr-2 h-4 w-4" />
+                      <span>Edit Form data</span>
+                    </div>
+                  </DialogTrigger>
+
+                  <SalesGuestModal
+                    id={row.original.id}
+                    open={open}
+                    setOpen={setOpen}
+                  />
+                </Dialog>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
+                onClick={() => DeleteGuest(row.original.id)}
+                className="pr-10 cursor-pointer hover:!bg-danger hover:!text-white"
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                Delete Guest data
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
+  ];
+
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
+
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
 
   const table = useReactTable({
-    data,
+    data: guestList,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -228,48 +285,23 @@ export function SalesTable() {
       <div className="flex w-full justify-between items-center py-4">
         <Input
           placeholder="Filter by tourist name..."
-          value={(table.getColumn("trName")?.getFilterValue() as string) ?? ""}
+          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("trName")?.setFilterValue(event.target.value)
+            table.getColumn("name")?.setFilterValue(event.target.value)
           }
           autoComplete="off"
           autoCorrect="off"
           className="max-w-sm"
         />
-        {/* <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown className="ml-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu> */}
 
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button className="bg-primary hover:bg-primary">
+            <Button type="button" className="bg-primary hover:bg-primary">
               <UserPlus2 /> Add new guest
             </Button>
           </DialogTrigger>
-          <SalesGuestModal id={"1"} />
+
+          <SalesGuestModal open={open} setOpen={setOpen} />
         </Dialog>
       </div>
       <div className="rounded-md border">
@@ -348,4 +380,6 @@ export function SalesTable() {
       </div>
     </div>
   );
-}
+};
+
+export default SalesTable;

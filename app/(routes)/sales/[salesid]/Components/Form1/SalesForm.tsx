@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useState } from "react";
+import React, { FC, useState } from "react";
 import * as z from "zod";
 import DateSelect from "@/components/Custom/Input/DateSelect";
 import PhoneNumberInput from "@/components/Custom/Input/PhoneNumberInput";
@@ -14,37 +14,19 @@ import { Antenna, CalendarIcon, CarTaxiFront, Siren } from "lucide-react";
 import Indicator from "../Indicator";
 import { format } from "date-fns";
 import Form1SideDiv from "./Form1SideDiv";
+import { toast } from "@/components/ui/use-toast";
+import { useRouter } from "next/navigation";
+import { IParams } from "../../page";
 const formSchema = z.object({
   assignedTo: z.string().min(1, {
     message: "Assigned to field must not be empty",
-  }),
-  guest: z.string().min(1, {
-    message: "Guest field is mandatory.",
   }),
 
   service: z.string().min(1, {
     message: "Service field is mandatory.",
   }),
-  category: z.string().min(1, {
-    message: "Category field is mandatory.",
-  }),
-  adult: z.string().min(1, {
-    message: "Adult field is mandatory.",
-  }),
-  adult12: z.string().min(1, {
-    message: "Adult field is mandatory.",
-  }),
-  ch512: z.string().min(1, {
-    message: "This field is mandatory.",
-  }),
-  ch35: z.string().min(1, {
-    message: "This field is mandatory.",
-  }),
-  infant: z.string().min(1, {
-    message: "This field is mandatory.",
-  }),
-  total: z.string().min(1, {
-    message: "This field is mandatory.",
+  contact: z.string().min(1, {
+    message: "Service field is mandatory.",
   }),
   email: z
     .string()
@@ -52,24 +34,41 @@ const formSchema = z.object({
       message: "Email is required",
     })
     .email({ message: "Email is not Valid" }),
+  adult: z.number().min(0, {
+    message: "Adult field is mandatory.",
+  }),
+  adult12: z.number().min(0, {
+    message: "Adult field is mandatory.",
+  }),
+  ch512: z.number().min(0, {
+    message: "This field is mandatory.",
+  }),
+  ch35: z.number().min(0, {
+    message: "This field is mandatory.",
+  }),
+  infant: z.number().min(0, {
+    message: "This field is mandatory.",
+  }),
 });
 
 export type StateInputProps = {
   assignedTo: string;
   service: string;
   email: string;
-  guest: string;
-  contact: string;
-  category: string;
   adult: number | null;
   adult12: number | null;
   ch512: number | null;
   ch35: number | null;
   infant: number | null;
-  total: number | null;
+  contact: string;
 };
 
-const SalesForm = () => {
+interface IdProps {
+  id: string;
+}
+
+const SalesForm: FC<IdProps> = ({ id }) => {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const channelData: string[] = [
     "Custom",
@@ -81,38 +80,35 @@ const SalesForm = () => {
 
   const VIPData: string[] = ["High", "Mid", "Low", "Reg"];
 
-  
-  
-  
-  
   const [departureValue, setDepartureValue] = useState("");
   const [vipValue, setVipValue] = useState("");
   const [arrivalValue, setArrivalValue] = useState("");
   const [value, setValue] = useState("");
   const [category, setCategory] = useState("");
+
   const [guestType, setGuestType] = useState("");
-  
-  
   const [openDepartureTime, setOpenDepartureTime] = useState(false);
   const [openArrivalTime, setOpenArrivalTime] = useState(false);
   const [open, setOpen] = useState(false);
   const [categoryOpen, setCateOpengory] = useState(false);
   const [openVip, setOpenVip] = useState(false);
   const [guestTypeOpen, setguestTypeOpen] = useState(false);
+  const [arrivedDate, setArrivedDate] = useState();
+
+  const [departTureDate, setDepartTureDate] = useState();
+  const [formFilledDate, setformFilledDate] = useState();
 
   const [inputValues, setInputValues] = useState<StateInputProps>({
     assignedTo: "",
     service: "",
     email: "",
-    guest: "",
-    contact: "",
-    category: "",
     adult: null,
     adult12: null,
     ch512: null,
     ch35: null,
     infant: null,
-    total: null,
+    contact: "",
+
     // ... add other fields as needed
   });
 
@@ -135,29 +131,59 @@ const SalesForm = () => {
       assignedTo: "",
       service: "",
       email: "",
-      guest: "",
-      category: "",
-      adult: "",
-      adult12: "",
-      ch512: "",
-      ch35: "",
-      infant: "",
-      total: "",
+      adult: 0,
+      adult12: 0,
+      ch512: 0,
+      ch35: 0,
+      infant: 0,
+      contact: "",
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    if (!inputValues.contact) return null;
-    console.log(values);
-    console.log(inputValues.contact);
+    setIsLoading(true);
+    try {
+      const res = await fetch("/api/guestinfo", {
+        method: "POST",
+        body: JSON.stringify({
+          ...values,
+          dateOfDeparture: departTureDate,
+          dateOfArrival: arrivedDate,
+          timeOfArrival: arrivalValue,
+          timeOfDeparture: departureValue,
+          vip: vipValue,
+          category: category,
+          guestType: guestType,
+          total: total,
+          Channel: value,
+          guestId: id,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (res.status === 200 || res.status === 402) {
+        toast({
+          title: res.statusText,
+        });
+      }
+
+      if (res.ok) {
+        setOpen(false);
+        router.push(`/sales/${id}/Itinerary`);
+        toast({
+          title: "Guest info form created successfully",
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   /* ------------------------------- UseFormHook ------------------------------ */
-
-  const [arrivedDate, setArrivedDate] = useState();
-
-  const [departTureDate, setDepartTureDate] = useState();
-  const [formFilledDate, setformFilledDate] = useState();
 
   const handleInputChange = (inputName: string, value: string) => {
     setInputValues((prevValues) => ({
@@ -187,13 +213,13 @@ const SalesForm = () => {
               className="space-y-6 "
             >
               <div className="flex gap-2 w-full items-center">
-                <div className="w-[50%]">
+                {/* <div className="w-[50%]">
                   <DateSelect
                     date={formFilledDate}
                     setDate={setformFilledDate}
                     label={"Form Filling Date"}
                   />
-                </div>
+                </div> */}
                 <div className="w-[50%]">
                   <InputField
                     form={form}
@@ -208,7 +234,7 @@ const SalesForm = () => {
               </div>
 
               <div className="py-2 px-4 bg-white rounded-md shadow-md h-max space-y-6">
-                <InputField
+                {/* <InputField
                   form={form}
                   name="guest"
                   label="Guest Name"
@@ -216,7 +242,7 @@ const SalesForm = () => {
                   setState={setInputValues}
                   onChange={handleInputChange}
                   desc=" This is your public display guest."
-                />
+                /> */}
 
                 <PhoneNumberInput
                   form={form}
@@ -414,28 +440,8 @@ const SalesForm = () => {
                   desc="This is your public display infant."
                 /> */}
                 <Button
+                  disabled={isLoading}
                   className=" text-white px-10"
-                  disabled={
-                    !formFilledDate ||
-                    !inputValues.assignedTo ||
-                    !inputValues.guest ||
-                    // !inputValues.contact ||
-                    !inputValues.email ||
-                    !inputValues.service ||
-                    !inputValues.category ||
-                    !vipValue ||
-                    !channelData ||
-                    !arrivedDate ||
-                    !arrivalValue ||
-                    !departTureDate ||
-                    !departureValue ||
-                    !inputValues.adult ||
-                    !inputValues.adult12 ||
-                    !inputValues.infant ||
-                    !inputValues.total ||
-                    !inputValues.ch35 ||
-                    !inputValues.ch512
-                  }
                   type="submit"
                 >
                   {isLoading ? (

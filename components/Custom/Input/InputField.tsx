@@ -62,8 +62,9 @@ const InputField: FC<InputProps> = ({
                 autoCorrect="off"
                 placeholder={placeholder}
                 value={field.value}
-                min={1}
+                min={0}
                 max={100}
+                step={"any"}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   if (type === "number") {
                     form.setValue(name, parseFloat(e.target.value));
@@ -73,7 +74,6 @@ const InputField: FC<InputProps> = ({
                 }}
               />
             </FormControl>
-
             <FormMessage />
           </FormItem>
         )}

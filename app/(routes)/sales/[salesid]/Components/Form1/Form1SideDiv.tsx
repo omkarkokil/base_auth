@@ -37,11 +37,9 @@ const Form1SideDiv: FC<SideProps> = ({
     <section className="flex flex-col  w-[50%]  py-5">
       {!filledData &&
       !state.assignedTo &&
-      !state.guest &&
       !state.contact &&
       !state.email &&
       !state.service &&
-      !state.category &&
       !vipValue &&
       !channel &&
       !arrivedDate &&
@@ -90,7 +88,7 @@ const Form1SideDiv: FC<SideProps> = ({
             ""
           )}
 
-          {state.guest || state.contact || state.email ? (
+          {state.contact || state.email ? (
             <article className="bg-white space-y-4 p-4 shadow-md">
               <div className="font-semibold items-center flex gap-4 text-xl text-success">
                 <div className="bg-success shadow-xl p-2 rounded-full">
@@ -98,12 +96,7 @@ const Form1SideDiv: FC<SideProps> = ({
                 </div>
                 Guest Info
               </div>
-              {state.guest && (
-                <>
-                  <p className="font-semibold">Name of guest: -</p>
-                  <p>{state.guest}</p>
-                </>
-              )}
+
               {state.contact && (
                 <>
                   <p className="font-semibold">Contact No of guest: -</p>
@@ -121,7 +114,7 @@ const Form1SideDiv: FC<SideProps> = ({
             ""
           )}
 
-          {state.service || state.category || vipValue || channel ? (
+          {state.service || vipValue || channel ? (
             <article className="bg-white space-y-4 p-4 shadow-md">
               <div className="font-semibold items-center flex gap-4 text-xl text-warning">
                 <div className="bg-warning shadow-xl p-2 rounded-full">
@@ -139,12 +132,6 @@ const Form1SideDiv: FC<SideProps> = ({
                 <>
                   <p className="font-semibold">Servies for guest: -</p>
                   <p>{state.service}</p>
-                </>
-              )}
-              {state.category && (
-                <>
-                  <p className="font-semibold">Entered Category: -</p>
-                  <p>{state.category}</p>
                 </>
               )}
 
@@ -245,16 +232,16 @@ const Form1SideDiv: FC<SideProps> = ({
                 </>
               )}
 
-              {state.infant &&
-                state.ch35 &&
-                state.ch512 &&
-                state.adult &&
-                state.adult12 && (
-                  <>
-                    <p className="font-semibold">Total: -</p>
-                    <p>{total}</p>
-                  </>
-                )}
+              {(state.infant ||
+                state.ch35 ||
+                state.ch512 ||
+                state.adult ||
+                state.adult12) && (
+                <>
+                  <p className="font-semibold">Total: -</p>
+                  <p>{total}</p>
+                </>
+              )}
             </article>
           ) : (
             ""

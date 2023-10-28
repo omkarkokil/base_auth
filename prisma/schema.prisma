@@ -53,12 +53,15 @@ model Account {
 model Guest {
   id              String @id @default(auto()) @map("_id") @db.ObjectId
   name            String
-  email           String?   @unique
-  contact         String? 
-  // filledDate      String?
+  // email           String?   @unique
+  // contact         String? 
+  points          Float
+  filledDate      DateTime
+  bookedDate      DateTime
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
-  guestInfo GuestInfo?
+  guestInfo GuestInfo[]
+  itinerary Itinerary[]
 }
 
 enum channel{
@@ -77,21 +80,34 @@ enum vip{
 
 model GuestInfo {
    id              String @id @default(auto()) @map("_id") @db.ObjectId
-   FormFillingDate DateTime
-   Channel channel
+   email        String?   @unique
+   contact         String? 
+   Channel String
+   assignedTo String
    service String
    category String
-   vip vip
+   guestType String
+   vip String
    dateOfArrival DateTime
-   timeOfArrival DateTime
+   timeOfArrival String
    dateOfDeparture DateTime
-   timeOfDeparture DateTime
-   adult String
-   adult12 String
-   ch512 String
-   ch35 String
-   infant String
-   total String
+   timeOfDeparture String
+   adult Int?
+   adult12 Int?
+   ch512 Int?
+   ch35 Int?
+   infant Int?
+   total Int?
    guestId String? @db.ObjectId @unique
    guest Guest? @relation( fields: [guestId] ,  references: [id])
+}
+
+model Itinerary {
+  id      String @id  @default(auto())  @map("_id") @db.ObjectId
+  date    String
+  day     String
+  stay    String
+  activity String[]
+  guestId String? @db.ObjectId
+  guest Guest? @relation( fields: [guestId] ,  references: [id] )
 }

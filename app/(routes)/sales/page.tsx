@@ -2,9 +2,20 @@ import DeskNav from "@/components/Custom/Navbar/DeskNav";
 import React from "react";
 import { ArrowLeftCircle } from "lucide-react";
 import Link from "next/link";
-import { SalesTable } from "../../../components/Custom/Table/SalesTable";
+import { getGuestList } from "@/actions/getGuestAction";
+import SalesTable from "@/components/Custom/Table/SalesTable";
+import { Guest } from "@prisma/client";
+import { getSingleGuest } from "@/actions/getSingleGuest";
 
-const page = () => {
+const page = async () => {
+  const guestList = await getGuestList();
+
+  const GetGuest = async (id: string) => {
+    "use server";
+    const getGuest = await getSingleGuest(id);
+    return getGuest;
+  };
+
   return (
     <>
       <DeskNav />
@@ -19,8 +30,8 @@ const page = () => {
           This is the sales requisition form from sales team
         </p> */}
       </div>
-      <div className="px-8 py-4 bg-gray-50">
-        <SalesTable />
+      <div className="px-8 py-4 h-[84vh] bg-gray-50">
+        <SalesTable guestList={guestList as Guest[]} Guest={GetGuest} />
       </div>
     </>
   );

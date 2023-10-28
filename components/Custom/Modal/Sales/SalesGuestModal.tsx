@@ -7,65 +7,113 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import {
-  Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
-import { CalendarIcon, CarTaxiFront } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+
+import { FC, useEffect, useMemo, useState } from "react";
 import InputField from "../../Input/InputField";
 import PhoneNumberInput from "../../Input/PhoneNumberInput";
 import * as z from "zod";
 import { useRouter } from "next/navigation";
+import DateSelect from "../../Input/DateSelect";
+import { toast } from "@/components/ui/use-toast";
+import { Guest } from "@prisma/client";
+import { useGetGuest } from "@/hooks/useGetGuest";
 
 const formSchema = z.object({
-  guest: z.string().min(1, {
+  name: z.string().min(1, {
     message: "Guest field is mandatory.",
   }),
-  contact: z.string().min(4, {
-    message: "Contact field is mandatory.",
+  points: z.number().min(1, {
+    message: "Point field is mandatory.",
   }),
-  email: z
-    .string()
-    .min(1, {
-      message: "Email is required",
-    })
-    .email({ message: "Email is not Valid" }),
+  // email: z
+  //   .string()
+  //   .min(1, {
+  //     message: "Email is required",
+  //   })
+  //   .email({ message: "Email is not Valid" }),
 });
 
-export function SalesGuestModal({ id }: { id: string }) {
+export interface InputProps {
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  id?: string;
+  open: boolean;
+}
+
+export const SalesGuestModal: FC<InputProps> = ({ setOpen, id, open }) => {
+  const [userData, setUserData] = useState<Guest>();
+  const getUsers = async () => {
+    if (!id) {
+      return null;
+    }
+    const res = await fetch(`/api/guest/${id}`);
+    const data = await res.json();
+    setUserData(data);
+    return data;
+  };
+
+  let iSid = id;
+  useEffect(() => {
+    getUsers();
+  }, [open]);
+
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
-      guest: "",
-      contact: "",
+      name: userData?.name,
+      points: userData?.points,
     },
   });
 
+  console.log(userData?.id);
+
+  const [filledDate, setFilledDate] = useState(userData?.filledDate);
+  const [bookedDate, setBookedDate] = useState(userData?.bookedDate);
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    router.push("/sales/1/GuestInfo");
+    try {
+      const res = await fetch("/api/guest", {
+        method: "POST",
+        body: JSON.stringify({
+          ...values,
+          filledDate: filledDate && new Date(filledDate),
+          bookedDate: bookedDate && new Date(bookedDate),
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (res.status === 200 || res.status === 402) {
+        toast({
+          title: res.statusText,
+        });
+      }
+
+      if (res.ok) {
+        setOpen(false);
+        router.refresh();
+        toast({
+          title: "Sales Requisition created successfully",
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
     <DialogContent className=" bg-white sm:max-w-[600px]">
       <DialogHeader className="pb-4">
-        <DialogTitle>Create Sales Requistion</DialogTitle>
+        <DialogTitle>
+          {userData?.id !== undefined ? "Edit" : "Create"} Sales Requistion
+        </DialogTitle>
         <DialogDescription>
           Make sales requisition form for new guest
         </DialogDescription>
@@ -82,14 +130,14 @@ export function SalesGuestModal({ id }: { id: string }) {
             <div className="w-full">
               <InputField
                 form={form}
-                name="guest"
+                name="name"
                 label="Guest Name"
                 placeholder="Enter guest name"
                 desc=" This is your public display guest."
               />
             </div>
 
-            <div className="w-full">
+            {/* <div className="w-full">
               <PhoneNumberInput
                 form={form}
                 name="contact"
@@ -108,11 +156,40 @@ export function SalesGuestModal({ id }: { id: string }) {
                 placeholder="Enter email"
                 desc=" This is your public display email."
               />
+            </div> */}
+
+            <div className="w-full">
+              <DateSelect
+                date={filledDate}
+                setDate={setFilledDate}
+                label={"Enter Filed Date"}
+              />
+            </div>
+            <div className="w-full">
+              <DateSelect
+                date={bookedDate}
+                setDate={setBookedDate}
+                label={"Enter Booked Date"}
+              />
+            </div>
+            <div className="w-full">
+              <InputField
+                form={form}
+                name="points"
+                label="Enter Points"
+                type="number"
+                placeholder="1.2"
+                desc=" This is your public display email."
+              />
             </div>
           </div>
 
           <DialogFooter>
-            <Button className="bg-primary" type="submit">
+            <Button
+              disabled={!filledDate || !bookedDate}
+              className="bg-primary"
+              type="submit"
+            >
               Save changes
             </Button>
           </DialogFooter>
@@ -120,4 +197,4 @@ export function SalesGuestModal({ id }: { id: string }) {
       </Form>
     </DialogContent>
   );
-}
+};

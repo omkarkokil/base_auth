@@ -19,7 +19,6 @@ type DateProps = {
 };
 
 const DateSelect: FC<DateProps> = ({ label, date, setDate }) => {
-  const newDate = new Date();
   return (
     <div className="flex justify-start items-start flex-col gap-4">
       <Label htmlFor="username">{label}</Label>

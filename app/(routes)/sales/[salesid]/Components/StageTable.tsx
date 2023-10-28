@@ -53,6 +53,7 @@ import {
 import { DriverModal } from "@/components/Custom/Modal/DriverModal";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import Link from "next/link";
+import { Guest, GuestInfo } from "@prisma/client";
 
 export type StageFormProps = {
   id: string;
@@ -60,6 +61,7 @@ export type StageFormProps = {
   Stages: string;
   status: boolean;
   href: string;
+  data?: Guest;
 };
 
 export const columns: ColumnDef<StageFormProps>[] = [
@@ -142,20 +144,25 @@ export const columns: ColumnDef<StageFormProps>[] = [
       const payment = row.original;
       return (
         <>
-          {/* {row.original.status} */}
-          <Link href={row.original.href}>
-            <Button className="text-primary  hover:!text-white shadow-md bg-sky-100 h-max py-1  flex gap-2 hover:!bg-primary">
-              <LogIn className="w-4 h-4" />
-              <p>Go next</p>
-            </Button>
-          </Link>
+          {row.original.status === false && (
+            <Link href={row.original.href}>
+              <Button className="text-primary  hover:!text-white shadow-md bg-sky-100 h-max py-1  flex gap-2 hover:!bg-primary">
+                <LogIn className="w-4 h-4" />
+                <p>Go next</p>
+              </Button>
+            </Link>
+          )}
         </>
       );
     },
   },
 ];
 
-export function StageTable() {
+interface props {
+  data: StageFormProps[];
+}
+
+export function StageTable({ data }: props) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []

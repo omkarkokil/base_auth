@@ -6,7 +6,7 @@ export const data: StageFormProps[] = [
         sr: 1,
         status: true,
         Stages: "Guest info Form",
-        href: "/sales/1/GuestInfo",
+        href: `/sales/1/GuestInfo`,
     },
     {
         id: "m5gr84i9",

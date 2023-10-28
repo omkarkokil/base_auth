@@ -37,30 +37,37 @@ import { ActivityStateProps } from "@/app/(routes)/sales/[salesid]/Components/Fo
 
 export interface InputProps {
   setOpen?: React.Dispatch<React.SetStateAction<boolean>> | undefined;
-  setFormData?: React.Dispatch<React.SetStateAction<ActivityStateProps>>;
-  formdata?: string[];
+  setFormData?: React.Dispatch<React.SetStateAction<string[]>>;
+  addActivityForDay: (day: string, activity: string[]) => void;
+  formdata: string[];
+  day: string;
 }
 
 export const ItineraryModal: FC<InputProps> = ({
   setOpen,
   setFormData,
   formdata,
+  addActivityForDay,
+  day,
 }) => {
   const [activity, setActivity] = useState<any>(0);
 
+
   const form = useForm();
 
-  const onSubmit: SubmitHandler<FieldValues> = (values) => {
-    console.log(values);
+  const onSubmit: SubmitHandler<FieldValues> = async (values) => {
+    let updatedFormData: string[] = [];
     if (setOpen && setFormData) {
-      setFormData(Object.values(values));
       values && setOpen(false);
+      updatedFormData = Object.values(values);
+      setFormData(updatedFormData);
+      setOpen(false);
     }
-    console.log(formdata, "form");
+    addActivityForDay(day, updatedFormData);
   };
 
   return (
-    <DialogContent className=" bg-white sm:max-w-[600px]">
+    <DialogContent className=" overflow-y-scroll max-h-[90vh] bg-white sm:max-w-[600px]">
       <DialogHeader className="pb-4">
         <DialogTitle>Add Activity Form</DialogTitle>
         <DialogDescription>Create a Activity Form</DialogDescription>
@@ -77,6 +84,7 @@ export const ItineraryModal: FC<InputProps> = ({
             <div className="w-full">
               <BasicInputField
                 name="guest"
+                type="number"
                 label="Total Activity"
                 placeholder="2"
                 value={activity}

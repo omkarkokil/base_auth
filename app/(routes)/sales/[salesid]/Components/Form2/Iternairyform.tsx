@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useState } from "react";
+import React, { FC, useRef, useState } from "react";
 
 export interface Item {
   id: number;
@@ -50,8 +50,11 @@ import {
 import { datas } from "@/app/data/itenarydata";
 import { format } from "date-fns";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { SalesGuestModal } from "@/components/Custom/Modal/Sales/SalesGuestModal";
+
 import { ItineraryModal } from "@/components/Custom/Modal/Sales/Itinerary/ItineraryModal";
+import { DateActivity } from "../../Itinerary/page";
+import { Item } from "@radix-ui/react-dropdown-menu";
+import BasicSelectField from "@/components/Custom/Select/BasicSelectField";
 
 export type ItienaryProps = {
   date: string;
@@ -59,21 +62,74 @@ export type ItienaryProps = {
   lightshow: string;
   Special: string;
 };
-
 export type ActivityStateProps = string[];
+type ItenaryInputProps = {
+  dateData: DateActivity[];
+  paramsid: string;
+};
 
-export function Iternairyform() {
+export const Iternairyform: FC<ItenaryInputProps> = ({
+  dateData,
+  paramsid,
+}) => {
   const [open, setOpen] = useState(false);
-  const [formdata, setFormData] = useState<ActivityStateProps>([]);
-  let day = 1;
-  const columns: ColumnDef<ItienaryProps>[] = [
-    // {
-    //   id: "actions",
-    //   enableHiding: false,
-    //   cell: ({ row }) => {
-    //     return <Menu className="h-4 w-4" />;
-    //   },
-    // },
+  const [isLoading, setIsLoading] = useState(false);
+  const [data, setData] = useState<DateActivity[]>(dateData);
+
+  const onSubmit = async () => {
+    setIsLoading(true);
+    try {
+      const res = await fetch("/api/itinerary", {
+        method: "POST",
+        body: JSON.stringify({
+          ...data,
+        }),
+      });
+
+      if (res.ok) {
+        console.log("success");
+      }
+      if (!res.ok) {
+        console.log("error");
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const addActivityForDay = (day: string, activity: string[]) => {
+    setData((prevRows) =>
+      prevRows.map((row) => {
+        return row.day === day ? { ...row, activity: activity } : row;
+      })
+    );
+  };
+
+  const addStayForDay = (day: string, stay: string) => {
+    setData((prevRows) =>
+      prevRows.map((row) => {
+        return row.day === day ? { ...row, stay: stay } : row;
+      })
+    );
+  };
+
+  const [formdata, setFormData] = useState<string[]>([]);
+  const [openedDialogId, setOpenedDialogId] = useState<string | null>(null);
+  const [dropdownValues, setDropdownValues] = useState<Record<string, string>>(
+    {}
+  );
+
+  const toggleDialog = (day: string) => {
+    if (openedDialogId === day) {
+      setOpenedDialogId(null); // Close the dialog
+    } else {
+      setOpenedDialogId(day); // Open the dialog for the specific day
+    }
+  };
+
+  const columns: ColumnDef<DateActivity>[] = [
     {
       accessorKey: "date",
       header: "Date",
@@ -85,33 +141,43 @@ export function Iternairyform() {
           </div>
           <div className="capitalize flex gap-4 items-center">
             <CalendarClock className="h-5 w-5 text-primary" />{" "}
-            {format(new Date(row.original.date), "PP")}
+            {row.original.date}
           </div>
         </div>
       ),
     },
     {
-      id: "activty",
+      id: "activity",
       enableHiding: false,
       cell: ({ row }) => (
         <>
-          <section className="flex flex-row items-center justify-between">
+          <section className="flex mr-80 flex-row items-center gap-6 justify-end">
             <aside>
-              {formdata.length >= 1 ? (
-                formdata?.map((item, id) => <p key={id}>{item},</p>)
+              {Array.isArray(row.original.activity) ? (
+                row.original.activity.join(", ")
               ) : (
                 <p className="text-center">No data</p>
               )}
             </aside>
             <aside>
-              <Dialog open={open} onOpenChange={setOpen}>
-                <DialogTrigger asChild>
+              <Dialog
+                open={open && openedDialogId === row.original.day}
+                onOpenChange={setOpen}
+              >
+                <DialogTrigger
+                  onClick={() => {
+                    toggleDialog(row.original.day);
+                  }}
+                  asChild
+                >
                   <MoreHorizontal className="h-4 w-4 cursor-pointer" />
                 </DialogTrigger>
                 <ItineraryModal
                   setOpen={setOpen}
                   formdata={formdata}
                   setFormData={setFormData}
+                  addActivityForDay={addActivityForDay}
+                  day={row.original.day}
                 />
               </Dialog>
             </aside>
@@ -124,18 +190,26 @@ export function Iternairyform() {
       header: () => <div className="text-center">Stay</div>,
       cell: ({ row }) => {
         return (
-          <div className="text-center font-medium flex justify-center items-center gap-4">
+          <div className="text-right w-max font-medium flex justify-center items-center gap-4">
             <MapPin className="h-5 w-5 text-success" />
-            {row.original.stay}
+            {/* {row.original.stay} */}
+            <div>
+              <BasicSelectField
+                state={dropdownValues}
+                addStayForDay={addStayForDay}
+                setState={setDropdownValues}
+                data={dateData}
+                day={row.original.day}
+              />
+            </div>
           </div>
         );
       },
     },
   ];
 
-   /* -------------------------- Dragable functioning -------------------------- */
+  /* -------------------------- Dragable functioning -------------------------- */
 
-  const [data, setData] = useState<ItienaryProps[]>(datas);
   const draggedItem = useRef<number | null>(null);
 
   const handleDragStart = (index: number) => {
@@ -149,13 +223,30 @@ export function Iternairyform() {
   const handleDrop = (index: number) => {
     if (draggedItem.current === null) return;
 
-    const draggedData = data[draggedItem.current];
-    const newList = [...data];
+    // Get the activity and stay from the row that was dragged
+    const draggedActivity = data[draggedItem.current].activity;
+    const draggedStay = data[draggedItem.current].stay;
 
-    newList.splice(draggedItem.current, 1);
-    newList.splice(index, 0, draggedData);
+    // Also store the target row's activity and stay
+    const targetActivity = data[index].activity;
+    const targetStay = data[index].stay;
 
-    setData(newList);
+    // Clone the current data
+    const newData = [...data];
+
+    // Set the dragged activity and stay to the target row
+    newData[index].activity = draggedActivity;
+    newData[index].stay = draggedStay;
+
+    // Set the target row's original activity and stay to the dragged row
+    newData[draggedItem.current].activity = targetActivity;
+    newData[draggedItem.current].stay = targetStay;
+
+    // Update state
+    setData(newData);
+
+    // Reset the dragged item
+    draggedItem.current = null;
   };
 
   /* -------------------------- Dragable functioning -------------------------- */
@@ -239,30 +330,24 @@ export function Iternairyform() {
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
-        </div>
+      <div className="flex items-center space-x-2 py-4">
         <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
+          <Button disabled={isLoading} onClick={onSubmit}>
+            {isLoading ? (
+              <div
+                className="inline-block h-5 w-5 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                role="status"
+              >
+                <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+                  Loading...
+                </span>
+              </div>
+            ) : (
+              "Next step"
+            )}
           </Button>
         </div>
       </div>
     </div>
   );
-}
+};
