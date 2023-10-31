@@ -57,12 +57,19 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import Link from "next/link";
 import { SalesGuestModal } from "@/components/Custom/Modal/Sales/SalesGuestModal";
 import { getGuestList } from "@/actions/getGuestAction";
 import { Guest, GuestInfo } from "@prisma/client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "@/components/ui/use-toast";
 
@@ -86,6 +93,7 @@ const SalesTable: React.FC<guestProps> = ({ guestList, Guest }) => {
   const router = useRouter();
 
   const [open, setOpen] = useState(false);
+  const [ids, setids] = useState("");
 
   const CheckGuest = async (id: string) => {
     const data = await Guest(id);
@@ -95,6 +103,13 @@ const SalesTable: React.FC<guestProps> = ({ guestList, Guest }) => {
       router.push(`/sales/${id}`);
     }
   };
+
+  useEffect(() => {
+    if (!open) {
+      setids("");
+    }
+  }, [open]);
+
   const DeleteGuest = async (id: string) => {
     const res = await fetch(`/api/guest/${id}`, {
       method: "DELETE",
@@ -202,51 +217,49 @@ const SalesTable: React.FC<guestProps> = ({ guestList, Guest }) => {
       cell: ({ row }) => {
         const payment = row.original;
         return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only ">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Add Actions</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() => CheckGuest(row.original.id)}
-                className="pr-10 cursor-pointer hover:!bg-primary hover:!text-white"
-              >
-                <UserPlus2 className="mr-2 h-4 w-4" />
-                <span>Add form data</span>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuLabel>Change Actions</DropdownMenuLabel>
-
-              <DropdownMenuItem className="pr-10 cursor-pointer hover:!bg-success hover:!text-white">
-                <Dialog modal={true} open={open} onOpenChange={setOpen}>
-                  <DialogTrigger asChild>
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <span className="sr-only ">Open menu</span>
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Add Actions</DropdownMenuLabel>
+                <DropdownMenuItem
+                  onClick={() => CheckGuest(row.original.id)}
+                  className="pr-10 cursor-pointer hover:!bg-primary hover:!text-white"
+                >
+                  <UserPlus2 className="mr-2 h-4 w-4" />
+                  <span>Add form data</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel>Change Actions</DropdownMenuLabel>
+                <DropdownMenuItem className="pr-10 cursor-pointer hover:!bg-success hover:!text-white">
+                  <DialogTrigger
+                    onClick={() => {
+                      setids(row.original.id);
+                    }}
+                    asChild
+                  >
                     <div className=" flex items-center">
                       <UserCog2 className="mr-2 h-4 w-4" />
                       <span>Edit Form data</span>
                     </div>
                   </DialogTrigger>
-
-                  <SalesGuestModal
-                    id={row.original.id}
-                    open={open}
-                    setOpen={setOpen}
-                  />
-                </Dialog>
-              </DropdownMenuItem>
-
-              <DropdownMenuItem
-                onClick={() => DeleteGuest(row.original.id)}
-                className="pr-10 cursor-pointer hover:!bg-danger hover:!text-white"
-              >
-                <Trash2 className="mr-2 h-4 w-4" />
-                Delete Guest data
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => DeleteGuest(row.original.id)}
+                  className="pr-10 cursor-pointer hover:!bg-danger hover:!text-white"
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Delete Guest data
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <SalesGuestModal id={ids} open={open} setOpen={setOpen} />
+          </Dialog>
         );
       },
     },
@@ -301,7 +314,7 @@ const SalesTable: React.FC<guestProps> = ({ guestList, Guest }) => {
             </Button>
           </DialogTrigger>
 
-          <SalesGuestModal open={open} setOpen={setOpen} />
+          {/* <SalesGuestModal open={open} setOpen={setOpen} /> */}
         </Dialog>
       </div>
       <div className="rounded-md border">
@@ -355,10 +368,10 @@ const SalesTable: React.FC<guestProps> = ({ guestList, Guest }) => {
         </Table>
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
-        {/* <div className="flex-1 text-sm text-muted-foreground">
+        <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
           {table.getFilteredRowModel().rows.length} row(s) selected.
-        </div> */}
+        </div>
         <div className="space-x-2">
           <Button
             variant="outline"

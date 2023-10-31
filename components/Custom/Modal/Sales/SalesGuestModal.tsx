@@ -16,13 +16,11 @@ import {
 
 import { FC, useEffect, useMemo, useState } from "react";
 import InputField from "../../Input/InputField";
-import PhoneNumberInput from "../../Input/PhoneNumberInput";
 import * as z from "zod";
 import { useRouter } from "next/navigation";
 import DateSelect from "../../Input/DateSelect";
 import { toast } from "@/components/ui/use-toast";
 import { Guest } from "@prisma/client";
-import { useGetGuest } from "@/hooks/useGetGuest";
 
 const formSchema = z.object({
   name: z.string().min(1, {
@@ -31,12 +29,6 @@ const formSchema = z.object({
   points: z.number().min(1, {
     message: "Point field is mandatory.",
   }),
-  // email: z
-  //   .string()
-  //   .min(1, {
-  //     message: "Email is required",
-  //   })
-  //   .email({ message: "Email is not Valid" }),
 });
 
 export interface InputProps {
@@ -48,30 +40,40 @@ export interface InputProps {
 export const SalesGuestModal: FC<InputProps> = ({ setOpen, id, open }) => {
   const [userData, setUserData] = useState<Guest>();
   const getUsers = async () => {
-    if (!id) {
-      return null;
+    try {
+      if (!id) {
+        return null;
+      }
+      const res = await fetch(`/api/guest/${id}`);
+
+      if (!res.ok) {
+        return res.status;
+      }
+
+      if (res.ok) {
+        const data = await res.json();
+
+        setUserData(data);
+        return data;
+      }
+    } catch (error) {
+      console.log(error);
     }
-    const res = await fetch(`/api/guest/${id}`);
-    const data = await res.json();
-    setUserData(data);
-    return data;
   };
 
-  let iSid = id;
   useEffect(() => {
     getUsers();
-  }, [open]);
+    console.log(userData);
+  }, []);
 
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: userData?.name,
-      points: userData?.points,
+      name: userData && userData?.name,
+      points: userData && userData?.points,
     },
   });
-
-  console.log(userData?.id);
 
   const [filledDate, setFilledDate] = useState(userData?.filledDate);
   const [bookedDate, setBookedDate] = useState(userData?.bookedDate);
@@ -111,9 +113,7 @@ export const SalesGuestModal: FC<InputProps> = ({ setOpen, id, open }) => {
   return (
     <DialogContent className=" bg-white sm:max-w-[600px]">
       <DialogHeader className="pb-4">
-        <DialogTitle>
-          {userData?.id !== undefined ? "Edit" : "Create"} Sales Requistion
-        </DialogTitle>
+        <DialogTitle>{id ? "Edit" : "Create"} Sales Requistion</DialogTitle>
         <DialogDescription>
           Make sales requisition form for new guest
         </DialogDescription>

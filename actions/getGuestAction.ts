@@ -14,7 +14,7 @@ export const getGuestList = async () => {
     try {
         const guest = await prisma.guest.findMany({
             orderBy: {
-                createdAt: "asc"
+                createdAt: "desc"
             }
         })
 

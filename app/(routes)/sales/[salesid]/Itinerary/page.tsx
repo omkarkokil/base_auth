@@ -25,6 +25,7 @@ export type DateActivity = {
 
 const page = async (props: Props) => {
   const guestUser = await getSingleGuest(props.params.salesid);
+
   const generateDateActivityArray = (
     startDate: string,
     endDate: string

@@ -85,7 +85,7 @@ const page = async ({ params }: { params: IParams }) => {
         </div>
       </div>
       <div className="px-8 py-4 bg-gray-50 h-[60vh]">
-        <div className="p-4 w-max px-8  rounded-md border-[.5px] border-gray-300">
+        <div className="p-4 w-max px-8  rounded-md border-[.5px] shadow-md">
           <span className="font-bold">Name of guest :</span> {guestUser?.name}
         </div>
         <StageTable data={data} />

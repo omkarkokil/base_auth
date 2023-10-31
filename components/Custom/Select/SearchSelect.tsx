@@ -37,7 +37,7 @@ interface SelectProps {
   setValue: (arg: string) => void;
   label: string;
   placeholder: string;
-  icon: any;
+  icon?: any;
 }
 
 const SearchSelect: FC<SelectProps> = ({
@@ -84,7 +84,7 @@ const SearchSelect: FC<SelectProps> = ({
                       setOpen(false);
                     }}
                   >
-                    <Icon className="h-4 mr-2" />
+                   {Icon && <Icon className="h-4 mr-2" />}
                     {item}
                   </CommandItem>
                 ))}

@@ -45,19 +45,6 @@ const BasicSelectField: FC<SelectProps> = ({
   };
   return (
     <>
-      {/* <select
-        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-          handleDropdownChange(day, e.target.value);
-
-          console.log(e.target.value);
-        }}
-        value={state[day] || "none"}
-        id={day}
-      >
-        <option value="light">Light</option>
-        <option value="dark">Dark</option>
-        <option value="system">System</option>
-      </select> */}
       <Select
         value={state[day] !== "" ? state[day] : "none"}
         onValueChange={(data) => {
