@@ -266,7 +266,7 @@ export const RoomBookingForm: FC<ItenaryInputProps> = ({
       cell: ({ row }) => {
         const payment = row.original;
         return (
-          <Dialog  open={open} onOpenChange={setOpen}>
+          <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
                 <span className="sr-only ">Open menu</span>

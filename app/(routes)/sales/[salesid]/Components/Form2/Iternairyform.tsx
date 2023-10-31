@@ -29,16 +29,7 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
+
 import {
   Table,
   TableBody,
@@ -55,6 +46,7 @@ import { ItineraryModal } from "@/components/Custom/Modal/Sales/Itinerary/Itiner
 import { DateActivity } from "../../Itinerary/page";
 import { Item } from "@radix-ui/react-dropdown-menu";
 import BasicSelectField from "@/components/Custom/Select/BasicSelectField";
+import { useRouter } from "next/navigation";
 
 export type ItienaryProps = {
   date: string;
@@ -72,6 +64,7 @@ export const Iternairyform: FC<ItenaryInputProps> = ({
   dateData,
   paramsid,
 }) => {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<DateActivity[]>(dateData);
@@ -87,6 +80,7 @@ export const Iternairyform: FC<ItenaryInputProps> = ({
       });
 
       if (res.ok) {
+        router.push(`/sales/${paramsid}/RoomBooking`);
         console.log("success");
       }
       if (!res.ok) {
@@ -110,6 +104,7 @@ export const Iternairyform: FC<ItenaryInputProps> = ({
   const addStayForDay = (day: string, stay: string) => {
     setData((prevRows) =>
       prevRows.map((row) => {
+        console.log(prevRows);
         return row.day === day ? { ...row, stay: stay } : row;
       })
     );
@@ -192,7 +187,6 @@ export const Iternairyform: FC<ItenaryInputProps> = ({
         return (
           <div className="text-right w-max font-medium flex justify-center items-center gap-4">
             <MapPin className="h-5 w-5 text-success" />
-            {/* {row.original.stay} */}
             <div>
               <BasicSelectField
                 state={dropdownValues}
@@ -262,7 +256,7 @@ export const Iternairyform: FC<ItenaryInputProps> = ({
     columns,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+    // getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
@@ -329,6 +323,30 @@ export const Iternairyform: FC<ItenaryInputProps> = ({
             )}
           </TableBody>
         </Table>
+      </div>
+      <div className="flex items-center justify-end space-x-2 py-4">
+        <div className="flex-1 text-sm text-muted-foreground">
+          {table.getFilteredSelectedRowModel().rows.length} of{" "}
+          {table.getFilteredRowModel().rows.length} row(s) selected.
+        </div>
+        <div className="space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Next
+          </Button>
+        </div>
       </div>
       <div className="flex items-center space-x-2 py-4">
         <div className="space-x-2">

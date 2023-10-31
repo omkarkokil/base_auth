@@ -28,6 +28,14 @@ const formSchema = z.object({
   }),
 });
 
+import Select from "react-select";
+
+const options = [
+  { value: "hotel1", label: "Hotel1" },
+  { value: "hotel2", label: "hotel2" },
+  { value: "hotel3", label: "hotel3" },
+];
+
 const RoomBookingModal = () => {
   const [hotels, setHotels] = useState("");
   const [guestChoice, setGuestChoice] = useState("");
@@ -39,7 +47,6 @@ const RoomBookingModal = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
       roomtype: "",
       plan: "",
     },
@@ -54,7 +61,7 @@ const RoomBookingModal = () => {
   }
 
   return (
-    <DialogContent className=" bg-white sm:max-w-[600px]">
+    <DialogContent className="bg-white overflow-y-auto max-h-[90vh] height-[80vh] sm:max-w-[600px]">
       <DialogHeader>
         <DialogTitle>Room Booking</DialogTitle>
       </DialogHeader>
@@ -73,25 +80,19 @@ const RoomBookingModal = () => {
                 PB
               </p>
             </div>
+
             <div className="w-full">
-              <InputField
-                form={form}
-                name="name"
-                label="Guest Name"
-                placeholder="Enter guest name"
-                desc=" This is your public display guest."
-              />
-            </div>
-            <div className="w-full">
-              <SearchSelect
-                data={hotelData}
-                open={hotelOpen}
-                setOpen={setHotelOpen}
-                value={hotels}
-                setValue={setHotels}
-                label="hotels"
-                placeholder={"select hotels..."}
-              />
+              <label className="text-sm font-medium " htmlFor="hotel">
+                Select Hotels
+              </label>
+              <div className="mt-2">
+                <Select
+                  className="placeholder:text-md text-sm outline-none border-none"
+                  id="hotel"
+                  options={options}
+                  isMulti
+                />
+              </div>
             </div>
             <div className="w-full">
               <SearchSelect
@@ -119,6 +120,51 @@ const RoomBookingModal = () => {
                 name="plan"
                 label="Plan"
                 placeholder="Enter plan"
+                desc=" This is your public display guest."
+              />
+            </div>
+            <div className="w-full">
+              <InputField
+                form={form}
+                name="Rooms"
+                label="Rooms..."
+                placeholder="Enter Room..."
+                desc=" This is your public display guest."
+              />
+            </div>
+            <div className="w-full">
+              <InputField
+                form={form}
+                name="Ex_ADL"
+                label="Ex-ADL..."
+                placeholder="Enter Ex-ADL..."
+                desc=" This is your public display guest."
+              />
+            </div>
+            <div className="w-full">
+              <InputField
+                form={form}
+                name="CWB"
+                label="CWB..."
+                placeholder="Enter CWB..."
+                desc=" This is your public display guest."
+              />
+            </div>
+            <div className="w-full">
+              <InputField
+                form={form}
+                name="CWOB"
+                label="CWOB..."
+                placeholder="Enter CWOB..."
+                desc=" This is your public display guest."
+              />
+            </div>
+            <div className="w-full">
+              <InputField
+                form={form}
+                name="comp_child"
+                label="comp_child..."
+                placeholder="Enter comp_child..."
                 desc=" This is your public display guest."
               />
             </div>

@@ -52,7 +52,6 @@ export const ItineraryModal: FC<InputProps> = ({
 }) => {
   const [activity, setActivity] = useState<any>(0);
 
-
   const form = useForm();
 
   const onSubmit: SubmitHandler<FieldValues> = async (values) => {
@@ -67,7 +66,7 @@ export const ItineraryModal: FC<InputProps> = ({
   };
 
   return (
-    <DialogContent className=" overflow-y-scroll max-h-[90vh] bg-white sm:max-w-[600px]">
+    <DialogContent className="overflow-hidden max-h-[90vh] bg-white sm:max-w-[600px]">
       <DialogHeader className="pb-4">
         <DialogTitle>Add Activity Form</DialogTitle>
         <DialogDescription>Create a Activity Form</DialogDescription>
