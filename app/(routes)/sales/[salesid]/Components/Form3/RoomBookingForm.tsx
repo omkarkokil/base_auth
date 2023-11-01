@@ -105,18 +105,21 @@ export const RoomBookingForm: FC<ItenaryInputProps> = ({
     }
   };
 
-  const [formdata, setFormData] = useState<string[]>([]);
   const [openedDialogId, setOpenedDialogId] = useState<string | null>(null);
-  const [dropdownValues, setDropdownValues] = useState<Record<string, string>>(
-    {}
-  );
-
   const toggleDialog = (day: string) => {
     if (openedDialogId === day) {
       setOpenedDialogId(null); // Close the dialog
     } else {
       setOpenedDialogId(day); // Open the dialog for the specific day
     }
+  };
+
+  const addRoomBookingRow = (day: string, rowData: any) => {
+    setData((prevRows) =>
+      prevRows.map((row) => {
+        return row.checkIn === day ? { ...row, ...rowData } : row;
+      })
+    );
   };
 
   const columns: ColumnDef<RoomBookingProps>[] = [
@@ -139,7 +142,9 @@ export const RoomBookingForm: FC<ItenaryInputProps> = ({
       cell: ({ row }) => {
         return (
           <div className="capitalize flex gap-4 items-center">
-            {row.original.hotel.length <= 0 ? "-" : row.original.hotel}
+            {row.original.hotel.length <= 0
+              ? "-"
+              : row.original.hotel.map((items) => <p> {items}, </p>)}
           </div>
         );
       },
@@ -163,9 +168,7 @@ export const RoomBookingForm: FC<ItenaryInputProps> = ({
       cell: ({ row }) => {
         return (
           <div className="capitalize flex gap-4 ">
-            {row.original.guestChoice.length <= 0
-              ? "-"
-              : row.original.guestChoice}
+            {row.original.roomType.length <= 0 ? "-" : row.original.roomType}
           </div>
         );
       },
@@ -215,12 +218,12 @@ export const RoomBookingForm: FC<ItenaryInputProps> = ({
       },
     },
     {
-      accessorKey: "ex_ADL",
+      accessorKey: "Ex_ADL",
       header: () => <div className="text-left">EX_ADL</div>,
       cell: ({ row }) => {
         return (
           <div className="capitalize flex gap-4 ">
-            {row.original.ex_ADL.length <= 0 ? "-" : row.original.ex_ADL}
+            {row.original.Ex_ADL.length <= 0 ? "-" : row.original.Ex_ADL}
           </div>
         );
       },
@@ -264,17 +267,31 @@ export const RoomBookingForm: FC<ItenaryInputProps> = ({
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
-        const payment = row.original;
         return (
-          <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only ">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DialogTrigger>
-            <RoomBookingModal />
-          </Dialog>
+          <div>
+            <Dialog
+              open={open && openedDialogId === row.original.checkIn}
+              onOpenChange={setOpen}
+            >
+              <DialogTrigger
+                asChild
+                onClick={() => {
+                  toggleDialog(row.original.checkIn);
+                }}
+              >
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <span className="sr-only ">Open menu</span>
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DialogTrigger>
+              <RoomBookingModal
+                id={row.original.checkIn}
+                addRoomBookingRow={addRoomBookingRow}
+                setOpen={setOpen}
+                place={row.original.place}
+              />
+            </Dialog>
+          </div>
         );
       },
     },

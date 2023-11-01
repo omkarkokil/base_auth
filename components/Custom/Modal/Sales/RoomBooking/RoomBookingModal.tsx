@@ -13,22 +13,35 @@ import { Form } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
+import { FC, SetStateAction, useState } from "react";
 import SearchSelect from "@/components/Custom/Select/SearchSelect";
 
 const formSchema = z.object({
-  name: z.string().min(1, {
-    message: "Name field is mandatory.",
+  rooms: z.string().min(1, {
+    message: "Room field is mandatory.",
   }),
-  roomtype: z.string().min(1, {
+  roomType: z.string().min(1, {
     message: "Room Type field is mandatory.",
   }),
   plan: z.string().min(1, {
     message: "Room Type field is mandatory.",
   }),
+  Ex_ADL: z.string().min(1, {
+    message: "Ex_ADL field is mandatory.",
+  }),
+  CWB: z.string().min(1, {
+    message: "Ex_ADL field is mandatory.",
+  }),
+  CWOB: z.string().min(1, {
+    message: "Ex_ADL field is mandatory.",
+  }),
+  comp_Child: z.string().min(1, {
+    message: "Ex_ADL field is mandatory.",
+  }),
 });
 
 import Select from "react-select";
+import { RoomBookingProps } from "@/app/(routes)/sales/[salesid]/RoomBooking/page";
 
 const options = [
   { value: "hotel1", label: "Hotel1" },
@@ -36,29 +49,61 @@ const options = [
   { value: "hotel3", label: "hotel3" },
 ];
 
-const RoomBookingModal = () => {
-  const [hotels, setHotels] = useState("");
-  const [guestChoice, setGuestChoice] = useState("");
-  const hotelData: string[] = ["A", "B", "C", "D"];
-  const guestData: string[] = ["Particular", "Preffred", "Optional"];
-  // const hotelData: string[] = ["A", "B", "C", "D"];
-  const [hotelOpen, setHotelOpen] = useState(false);
+type RoomBookingInputProps = {
+  id: string;
+  addRoomBookingRow: (day: string, rowData: any) => void;
+  setOpen: React.Dispatch<SetStateAction<boolean>>;
+  place: string | undefined;
+};
+
+const RoomBookingModal: FC<RoomBookingInputProps> = ({
+  id,
+  addRoomBookingRow,
+  setOpen,
+  place,
+}) => {
   const [guestOpen, setGuestOpen] = useState(false);
+  const [hotels, setHotels] = useState([]);
+  const [guestChoice, setGuestChoice] = useState("");
+  const guestData: string[] = ["Particular", "Preffred", "Optional"];
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      roomtype: "",
+      roomType: "",
       plan: "",
+      rooms: "",
+      Ex_ADL: "",
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log(values);
+
+    if (hotels.length <= 0 || guestChoice.length <= 0) {
+      console.log("not");
+
+      return false;
+    }
+
     try {
-      console.log("hii");
+      addRoomBookingRow(id, {
+        ...values,
+        hotel: hotels,
+        guestChoice: guestChoice,
+      });
+      console.log(id);
+
+      setOpen(false);
     } catch (error) {
       console.log(error);
     }
   }
+
+  const handleSelectChange = (selectedOption: any) => {
+    const extractedValues = selectedOption.map((item: any) => item.value);
+    setHotels(extractedValues);
+  };
 
   return (
     <DialogContent className="bg-white overflow-y-auto max-h-[90vh] height-[80vh] sm:max-w-[600px]">
@@ -77,7 +122,7 @@ const RoomBookingModal = () => {
             <div className="w-full">
               <h1 className="my-2 text-sm font-semibold">Stay</h1>
               <p className="text-xs w-[20%] py-2 px-2 border-[.5px] border-gray-300 rounded-md ">
-                PB
+                {place}
               </p>
             </div>
 
@@ -91,6 +136,7 @@ const RoomBookingModal = () => {
                   id="hotel"
                   options={options}
                   isMulti
+                  onChange={handleSelectChange}
                 />
               </div>
             </div>
@@ -108,7 +154,7 @@ const RoomBookingModal = () => {
             <div className="w-full">
               <InputField
                 form={form}
-                name="roomtype"
+                name="roomType"
                 label="Room Type"
                 placeholder="Enter Room Type"
                 desc=" This is your public display guest."
@@ -126,7 +172,7 @@ const RoomBookingModal = () => {
             <div className="w-full">
               <InputField
                 form={form}
-                name="Rooms"
+                name="rooms"
                 label="Rooms..."
                 placeholder="Enter Room..."
                 desc=" This is your public display guest."
@@ -162,7 +208,7 @@ const RoomBookingModal = () => {
             <div className="w-full">
               <InputField
                 form={form}
-                name="comp_child"
+                name="comp_Child"
                 label="comp_child..."
                 placeholder="Enter comp_child..."
                 desc=" This is your public display guest."

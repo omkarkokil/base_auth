@@ -143,7 +143,7 @@ const SalesForm: FC<IdProps> = ({ id }) => {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
-      const res = await fetch("/api/guestinfo", {
+      const res = await fetch("/api/guest/guestinfo", {
         method: "POST",
         body: JSON.stringify({
           ...values,

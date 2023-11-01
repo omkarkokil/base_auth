@@ -72,7 +72,7 @@ export const Iternairyform: FC<ItenaryInputProps> = ({
   const onSubmit = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch("/api/itinerary", {
+      const res = await fetch("/api/guest/itinerary", {
         method: "POST",
         body: JSON.stringify({
           ...data,
@@ -104,18 +104,17 @@ export const Iternairyform: FC<ItenaryInputProps> = ({
   const addStayForDay = (day: string, stay: string) => {
     setData((prevRows) =>
       prevRows.map((row) => {
-        console.log(prevRows);
         return row.day === day ? { ...row, stay: stay } : row;
       })
     );
   };
 
   const [formdata, setFormData] = useState<string[]>([]);
-  const [openedDialogId, setOpenedDialogId] = useState<string | null>(null);
   const [dropdownValues, setDropdownValues] = useState<Record<string, string>>(
     {}
   );
 
+  const [openedDialogId, setOpenedDialogId] = useState<string | null>(null);
   const toggleDialog = (day: string) => {
     if (openedDialogId === day) {
       setOpenedDialogId(null); // Close the dialog

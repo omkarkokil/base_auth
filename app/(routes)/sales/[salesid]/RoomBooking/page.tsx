@@ -9,14 +9,14 @@ import { RoomBookingForm } from "../Components/Form3/RoomBookingForm";
 
 export type RoomBookingProps = {
   place?: string;
-  hotel: string;
+  hotel: string[];
   guestChoice: string;
   roomType: string;
   plan: string;
   checkIn: string;
   checkOut?: string;
   rooms: string;
-  ex_ADL: string;
+  Ex_ADL: string;
   CWB: string;
   CWOB: string;
   comp_Child: string;
@@ -36,7 +36,7 @@ const page = async (props: Props) => {
   //       checkIn: "",
   //       checkOut: "",
   //       rooms: "",
-  //       ex_ADL: "",
+  //       Ex_ADL: "",
   //       CWB: "",
   //       CWOB: "",
   //       comp_Child: "",
@@ -59,12 +59,12 @@ const page = async (props: Props) => {
         currentRow = {
           checkIn: item.date,
           place: item.stay,
-          hotel: "",
+          hotel: [],
           guestChoice: "",
           roomType: "",
           plan: "",
           rooms: "",
-          ex_ADL: "",
+          Ex_ADL: "",
           CWB: "",
           CWOB: "",
           comp_Child: "",
