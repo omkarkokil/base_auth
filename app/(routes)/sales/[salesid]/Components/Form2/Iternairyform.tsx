@@ -54,6 +54,7 @@ export type ItienaryProps = {
   lightshow: string;
   Special: string;
 };
+
 export type ActivityStateProps = string[];
 type ItenaryInputProps = {
   dateData: DateActivity[];

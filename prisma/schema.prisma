@@ -62,6 +62,9 @@ model Guest {
   updatedAt       DateTime @updatedAt
   guestInfo GuestInfo[]
   itinerary Itinerary[]
+  roomBooking RoomBooking[]
+  cruise Cruise[]
+  vehical Vehical[]
 }
 
 enum channel{
@@ -110,4 +113,46 @@ model Itinerary {
   activity String[]
   guestId String? @db.ObjectId
   guest Guest? @relation( fields: [guestId] ,  references: [id] )
+}
+
+model RoomBooking {
+    id      String @id  @default(auto())  @map("_id") @db.ObjectId
+    place String
+    hotel String[]
+    choosedhotel String
+    roomType String
+    plan String
+    rooms String
+    Ex_ADL String
+    CWB String
+    CWOB String
+    comp_Child String
+    checkIn String
+    checkOut String
+    guestChoice String
+  guestId String @db.ObjectId
+  guest Guest @relation( fields: [guestId] ,  references: [id] )
+}
+
+
+model Cruise {
+     id      String @id  @default(auto())  @map("_id") @db.ObjectId
+     time String?
+     route String?
+     cruise String?
+     journeyDate String?
+     seat_class String?
+     PNR String?
+     guestId String @db.ObjectId
+     guest Guest @relation( fields: [guestId] ,  references: [id] )
+}
+
+model Vehical {
+     id      String @id  @default(auto())  @map("_id") @db.ObjectId
+     place String?
+     service String?
+     ac_nonac String?
+     vehical_type String?
+     guestId String @db.ObjectId
+     guest Guest @relation( fields: [guestId] ,  references: [id] )
 }

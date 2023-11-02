@@ -12,9 +12,9 @@ import * as z from "zod";
 import { Form } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Label } from "@/components/ui/label";
 import { FC, SetStateAction, useState } from "react";
 import SearchSelect from "@/components/Custom/Select/SearchSelect";
+import Select from "react-select";
 
 const formSchema = z.object({
   rooms: z.string().min(1, {
@@ -40,9 +40,6 @@ const formSchema = z.object({
   }),
 });
 
-import Select from "react-select";
-import { RoomBookingProps } from "@/app/(routes)/sales/[salesid]/RoomBooking/page";
-
 const options = [
   { value: "hotel1", label: "Hotel1" },
   { value: "hotel2", label: "hotel2" },
@@ -64,6 +61,9 @@ const RoomBookingModal: FC<RoomBookingInputProps> = ({
 }) => {
   const [guestOpen, setGuestOpen] = useState(false);
   const [hotels, setHotels] = useState([]);
+  const [choosedHotel, setChoosedHotel] = useState([]);
+
+  const [singleHotel, setSingleHotel] = useState("");
   const [guestChoice, setGuestChoice] = useState("");
   const guestData: string[] = ["Particular", "Preffred", "Optional"];
 
@@ -78,11 +78,7 @@ const RoomBookingModal: FC<RoomBookingInputProps> = ({
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-
     if (hotels.length <= 0 || guestChoice.length <= 0) {
-      console.log("not");
-
       return false;
     }
 
@@ -91,8 +87,8 @@ const RoomBookingModal: FC<RoomBookingInputProps> = ({
         ...values,
         hotel: hotels,
         guestChoice: guestChoice,
+        choosedhotel: singleHotel,
       });
-      console.log(id);
 
       setOpen(false);
     } catch (error) {
@@ -101,8 +97,13 @@ const RoomBookingModal: FC<RoomBookingInputProps> = ({
   }
 
   const handleSelectChange = (selectedOption: any) => {
+    setChoosedHotel(selectedOption);
     const extractedValues = selectedOption.map((item: any) => item.value);
     setHotels(extractedValues);
+  };
+
+  const handleSelectOneChange = (selectedOption: any) => {
+    setSingleHotel(selectedOption.value);
   };
 
   return (
@@ -125,7 +126,6 @@ const RoomBookingModal: FC<RoomBookingInputProps> = ({
                 {place}
               </p>
             </div>
-
             <div className="w-full">
               <label className="text-sm font-medium " htmlFor="hotel">
                 Select Hotels
@@ -140,16 +140,29 @@ const RoomBookingModal: FC<RoomBookingInputProps> = ({
                 />
               </div>
             </div>
-            <div className="w-full">
-              <SearchSelect
-                data={guestData}
-                open={guestOpen}
-                setOpen={setGuestOpen}
-                value={guestChoice}
-                setValue={setGuestChoice}
-                label="Guest choice"
-                placeholder={"select guestchoice..."}
-              />
+            <div className="flex w-full items-center justify-center gap-2">
+              <div className="w-[50%]">
+                <SearchSelect
+                  data={guestData}
+                  open={guestOpen}
+                  setOpen={setGuestOpen}
+                  value={guestChoice}
+                  setValue={setGuestChoice}
+                  label="Guest choice"
+                  placeholder={"select guestchoice..."}
+                />
+              </div>
+              <div className="w-[50%]">
+                <label className="text-sm font-medium " htmlFor="hotels">
+                  Select one from three
+                </label>
+                <Select
+                  className="placeholder:text-md mt-2 text-sm outline-none border-none"
+                  id="hotels"
+                  onChange={handleSelectOneChange}
+                  options={choosedHotel}
+                />
+              </div>
             </div>
             <div className="w-full">
               <InputField

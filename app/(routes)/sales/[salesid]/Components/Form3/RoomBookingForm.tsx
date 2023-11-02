@@ -18,30 +18,10 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import {
-  ArrowUpDown,
-  Calendar,
-  CalendarClock,
-  ChevronDown,
-  MapPin,
-  Menu,
-  MoreHorizontal,
-  Trash2,
-  UserCog2,
-  UserPlus2,
-} from "lucide-react";
+import { CalendarClock, MoreHorizontal } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
+
 import {
   Table,
   TableBody,
@@ -67,6 +47,8 @@ import { Item } from "@radix-ui/react-dropdown-menu";
 import BasicSelectField from "@/components/Custom/Select/BasicSelectField";
 import { RoomBookingProps } from "../../RoomBooking/page";
 import RoomBookingModal from "@/components/Custom/Modal/Sales/RoomBooking/RoomBookingModal";
+import { any } from "zod";
+import { useRouter } from "next/navigation";
 
 export type ActivityStateProps = string[];
 type ItenaryInputProps = {
@@ -81,19 +63,35 @@ export const RoomBookingForm: FC<ItenaryInputProps> = ({
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<RoomBookingProps[]>(RoomTableData);
+  const router = useRouter();
 
   const onSubmit = async () => {
     setIsLoading(true);
+    const mandatoryFields = [
+      "seat_class",
+      "PNR",
+      "time",
+      "route",
+      "cruise",
+      "journeyDate",
+    ];
+
     try {
-      const res = await fetch("/api/itinerary", {
+      const res = await fetch("/api/guest/roombooking", {
         method: "POST",
         body: JSON.stringify({
           ...data,
         }),
       });
 
+      if (res.status === 404) {
+        alert("All fields are mandatory");
+      }
+
       if (res.ok) {
         console.log("success");
+        router.push(`/sales/${paramsid}/Cruise`);
+        alert("succcess");
       }
       if (!res.ok) {
         console.log("error");
@@ -124,6 +122,38 @@ export const RoomBookingForm: FC<ItenaryInputProps> = ({
 
   const columns: ColumnDef<RoomBookingProps>[] = [
     {
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row }) => {
+        return (
+          <div>
+            <Dialog
+              open={open && openedDialogId === row.original.checkIn}
+              onOpenChange={setOpen}
+            >
+              <DialogTrigger
+                asChild
+                onClick={() => {
+                  toggleDialog(row.original.checkIn);
+                }}
+              >
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <span className="sr-only ">Open menu</span>
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DialogTrigger>
+              <RoomBookingModal
+                id={row.original.checkIn}
+                addRoomBookingRow={addRoomBookingRow}
+                setOpen={setOpen}
+                place={row.original.place}
+              />
+            </Dialog>
+          </div>
+        );
+      },
+    },
+    {
       accessorKey: "place",
       header: "Place",
       cell: ({ row }) => (
@@ -141,10 +171,14 @@ export const RoomBookingForm: FC<ItenaryInputProps> = ({
       header: () => <div className="text-left">Hotel</div>,
       cell: ({ row }) => {
         return (
-          <div className="capitalize flex gap-4 items-center">
+          <div className="capitalize flex gap-2 items-center">
             {row.original.hotel.length <= 0
               ? "-"
-              : row.original.hotel.map((items) => <p> {items}, </p>)}
+              : row.original.hotel.map((items) => (
+                  <p className="py-1 text-sm px-3 rounded-md  bg-slate-200 shadow-md">
+                    {items}
+                  </p>
+                ))}
           </div>
         );
       },
@@ -158,6 +192,19 @@ export const RoomBookingForm: FC<ItenaryInputProps> = ({
             {row.original.guestChoice.length <= 0
               ? "-"
               : row.original.guestChoice}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "choosedhotel",
+      header: () => <div className="text-left">One of three hotel</div>,
+      cell: ({ row }) => {
+        return (
+          <div className="capitalize flex gap-4 ">
+            {row.original.choosedhotel.length <= 0
+              ? "-"
+              : row.original.choosedhotel}
           </div>
         );
       },
@@ -259,38 +306,6 @@ export const RoomBookingForm: FC<ItenaryInputProps> = ({
             {row.original.comp_Child.length <= 0
               ? "-"
               : row.original.comp_Child}
-          </div>
-        );
-      },
-    },
-    {
-      id: "actions",
-      enableHiding: false,
-      cell: ({ row }) => {
-        return (
-          <div>
-            <Dialog
-              open={open && openedDialogId === row.original.checkIn}
-              onOpenChange={setOpen}
-            >
-              <DialogTrigger
-                asChild
-                onClick={() => {
-                  toggleDialog(row.original.checkIn);
-                }}
-              >
-                <Button variant="ghost" className="h-8 w-8 p-0">
-                  <span className="sr-only ">Open menu</span>
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </DialogTrigger>
-              <RoomBookingModal
-                id={row.original.checkIn}
-                addRoomBookingRow={addRoomBookingRow}
-                setOpen={setOpen}
-                place={row.original.place}
-              />
-            </Dialog>
           </div>
         );
       },

@@ -23,7 +23,7 @@ export async function POST(request: Request) {
             ...activity,
         }));
 
-        const guest = await prisma.roomBooking.createMany({
+        const guest = await prisma.cruise.createMany({
             data: formattedData,
         });
 

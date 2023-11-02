@@ -21,7 +21,10 @@ export const getSingleGuest = async (id: string | undefined) => {
             },
             include: {
                 guestInfo: true,
-                itinerary: true
+                itinerary: true,
+                roomBooking: true,
+                cruise: true,
+                vehical: true
             }
         })
         return guest;

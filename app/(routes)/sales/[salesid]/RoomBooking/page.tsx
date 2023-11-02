@@ -11,6 +11,7 @@ export type RoomBookingProps = {
   place?: string;
   hotel: string[];
   guestChoice: string;
+  choosedhotel: string;
   roomType: string;
   plan: string;
   checkIn: string;
@@ -61,6 +62,7 @@ const page = async (props: Props) => {
           place: item.stay,
           hotel: [],
           guestChoice: "",
+          choosedhotel: "",
           roomType: "",
           plan: "",
           rooms: "",
@@ -69,6 +71,7 @@ const page = async (props: Props) => {
           CWOB: "",
           comp_Child: "",
           checkOut: item.date,
+          guestId: props.params.salesid,
         };
       }
 

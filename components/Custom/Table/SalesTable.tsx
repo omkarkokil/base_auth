@@ -15,6 +15,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import {
+  AlertCircle,
   ArrowUpDown,
   Award,
   Calendar,
@@ -49,22 +50,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { data } from "@/app/data/driverdata";
-import { Badge } from "@/components/ui/badge";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import Link from "next/link";
 import { SalesGuestModal } from "@/components/Custom/Modal/Sales/SalesGuestModal";
 import { getGuestList } from "@/actions/getGuestAction";
@@ -317,25 +304,27 @@ const SalesTable: React.FC<guestProps> = ({ guestList, Guest }) => {
           {/* <SalesGuestModal open={open} setOpen={setOpen} /> */}
         </Dialog>
       </div>
+
       <div className="rounded-md border">
         <Table className="bg-white">
           <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow className="bg-slate-100" key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id} className="!text-[#333]">
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
+            {guestList.length > 0 &&
+              table.getHeaderGroups().map((headerGroup) => (
+                <TableRow className="bg-slate-100" key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead key={header.id} className="!text-[#333]">
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </TableHead>
+                    );
+                  })}
+                </TableRow>
+              ))}
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
@@ -358,15 +347,27 @@ const SalesTable: React.FC<guestProps> = ({ guestList, Guest }) => {
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center"
+                  className="h-24 p-0 text-center"
                 >
-                  No results.
+                  <div className="flex bg-[#fee2e2] rounded-md p-8  shadow-md   gap-4 w-full ">
+                    <AlertCircle className="h-12 w-12 text-danger" />
+                    <div className="flex flex-col items-start">
+                      <h1 className="text-2xl pb-2 font-semibold text-danger">
+                        Guest Sales Requisition data is not found
+                      </h1>
+                      <p className="font-medium text-sm  text-danger">
+                        Please create data first by using add new guest button
+                        to preview Guest Sales Requisition data
+                      </p>
+                    </div>
+                  </div>
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </div>
+
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}

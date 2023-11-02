@@ -5,6 +5,7 @@ import React, { FC } from "react";
 import { StageFormProps, StageTable } from "./Components/StageTable";
 import { getSingleGuest } from "@/actions/getSingleGuest";
 import { GuestInfo } from "@prisma/client";
+import { format } from "date-fns";
 
 export interface IParams {
   salesid: string;
@@ -30,21 +31,21 @@ const page = async ({ params }: { params: IParams }) => {
     {
       id: params.salesid,
       sr: 3,
-      status: false,
+      status: guestUser && guestUser.roomBooking.length <= 0 ? false : true,
       Stages: " Room Booking Form",
       href: `/sales/${params.salesid}/RoomBooking`,
     },
     {
       id: params.salesid,
       sr: 4,
-      status: false,
+      status: guestUser && guestUser.cruise.length <= 0 ? false : true,
       Stages: "Cruise Requisition Form",
       href: `/sales/${params.salesid}/Cruise`,
     },
     {
       id: params.salesid,
       sr: 5,
-      status: false,
+      status: guestUser && guestUser.vehical.length <= 0 ? false : true,
       Stages: "Vehicle Requisition Form",
       href: `/sales/${params.salesid}/Vehical`,
     },
@@ -85,8 +86,20 @@ const page = async ({ params }: { params: IParams }) => {
         </div>
       </div>
       <div className="px-8 py-4 bg-gray-50 h-[60vh]">
-        <div className="p-4 w-max px-8  rounded-md border-[.5px] shadow-md">
-          <span className="font-bold">Name of guest :</span> {guestUser?.name}
+        <div className="flex gap-4">
+          <div className="p-4 w-max px-8  rounded-md border-[.5px] shadow-md">
+            <span className="font-semibold"> Name of guest :</span>{" "}
+            {guestUser?.name}
+          </div>
+
+          <div className="p-4 w-max px-8  rounded-md border-[.5px] shadow-md">
+            <span className="font-semibold"> Filed Date :</span>{" "}
+            {guestUser && format(new Date(guestUser?.filledDate), "PP")}
+          </div>
+          <div className="p-4 w-max px-8  rounded-md border-[.5px] shadow-md">
+            <span className="font-semibold">Booked Date :</span>{" "}
+            {guestUser && format(new Date(guestUser?.bookedDate), "PP")}
+          </div>
         </div>
         <StageTable data={data} />
       </div>
