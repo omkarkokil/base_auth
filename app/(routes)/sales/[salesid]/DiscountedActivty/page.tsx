@@ -7,6 +7,7 @@ import { getSingleGuest } from "@/actions/getSingleGuest";
 import { Itinerary } from "@prisma/client";
 import { RoomBookingForm } from "../Components/Form3/RoomBookingForm";
 import CruiseForm from "../Components/Form4/CruiseForm";
+import DiscountedForm from "../Components/Form6/DiscountForm";
 
 export type CruiseFormProps = {
   seat_class: string;
@@ -33,6 +34,7 @@ const page = async (props: Props) => {
         </div>
       </div>
       <div className="px-8 py-4  h-[84vh] bg-gray-50">
+        <DiscountedForm id={props.params.salesid} />
         {/* <CruiseForm id={props.params.salesid} /> */}
       </div>
     </>
