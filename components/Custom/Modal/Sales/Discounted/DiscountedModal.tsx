@@ -14,6 +14,12 @@ import { Form } from "@/components/ui/form";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import Select from "react-select";
+import SearchSelect from "@/components/Custom/Select/SearchSelect";
+import DateSelect from "@/components/Custom/Input/DateSelect";
+import { Calendar } from "lucide-react";
+import InputField from "@/components/Custom/Input/InputField";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 
 interface CruiseModalProps {
   open: boolean;
@@ -29,13 +35,24 @@ const DiscountedModal: FC<CruiseModalProps> = ({
   id,
 }) => {
   const initialSelectedValues = {
-    place: null,
+    Activies: null,
+    stay: null,
     service: null,
-    ac_nonac: null,
-    vehical_type: null,
+    complimentary: null,
   };
 
   const [selectedValues, setSelectedValues] = useState(initialSelectedValues);
+
+  const [openTime, setOpenTime] = useState(false);
+  const [timeValue, setTimeValue] = useState("");
+  const [dateValue, setDateValue] = useState();
+  const [remark, setRemark] = useState("");
+
+  const activitesOptions = [
+    { value: "Activity1", label: "Activity1" },
+    { value: "Activity2", label: "Activity2" },
+    { value: "Activity3", label: "Activity3" },
+  ];
 
   const stayOptions = [
     { value: "PB", label: "PB" },
@@ -46,20 +63,9 @@ const DiscountedModal: FC<CruiseModalProps> = ({
     { value: "MY", label: "MY" },
   ];
 
-  const acOptions = [
-    { value: "AC", label: "AC" },
-    { value: "NON_AC", label: "NON_AC" },
-  ];
-
-  const typeOptions = [
-    { value: "Two wheeler", label: "Two wheeler" },
-    { value: "Four Wheeler", label: "Four Wheeler" },
-  ];
-
-  const serviceOptions = [
-    { value: "High", label: "High" },
-    { value: "Medium", label: "Medium" },
-    { value: "Low", label: "Low" },
+  const baseOptions = [
+    { value: true, label: "yes" },
+    { value: false, label: "No" },
   ];
 
   const handleSelectChange = (selectedValue: any, fieldName: string) => {
@@ -70,6 +76,15 @@ const DiscountedModal: FC<CruiseModalProps> = ({
     });
   };
 
+  const times = Array.from({ length: 24 * 4 }, (_, i) => {
+    const hour = Math.floor(i / 4);
+    const minute = 15 * (i % 4);
+    return `${String(hour).padStart(2, "0")}:${String(minute).padStart(
+      2,
+      "0"
+    )}`;
+  });
+
   const form = useForm();
 
   useEffect(() => {
@@ -78,9 +93,15 @@ const DiscountedModal: FC<CruiseModalProps> = ({
 
   const onSubmit: SubmitHandler<FieldValues> = async (values) => {
     const newValues = {
+      ...values,
+      arrival: dateValue,
+      time: timeValue,
       ...selectedValues,
+      remark: remark,
       guestId: id,
     };
+
+    console.log(newValues);
     setData((prev: any) => [...prev, newValues]);
     setOpen(false);
   };
@@ -90,7 +111,7 @@ const DiscountedModal: FC<CruiseModalProps> = ({
       <DialogHeader className="pb-4">
         <DialogTitle>Add Complimentary / Discounted Requisition</DialogTitle>
         <DialogDescription>
-          Create a Complimentary / Discounted requisition    
+          Create a Complimentary / Discounted requisition
         </DialogDescription>
       </DialogHeader>
 
@@ -103,15 +124,15 @@ const DiscountedModal: FC<CruiseModalProps> = ({
         >
           <div className="w-full">
             <label className="text-sm font-medium " htmlFor="hotel">
-              Select Stay
+              Select Activities
             </label>
             <div className="mt-2">
               <Select
                 className="placeholder:text-md text-sm outline-none border-none"
-                id="place"
-                options={stayOptions}
+                id="Activies"
+                options={activitesOptions}
                 onChange={(selectedValue) =>
-                  handleSelectChange(selectedValue, "place")
+                  handleSelectChange(selectedValue, "Activies")
                 }
               />
             </div>
@@ -119,21 +140,106 @@ const DiscountedModal: FC<CruiseModalProps> = ({
 
           <div className="w-full">
             <label className="text-sm font-medium " htmlFor="hotel">
-              Select Service
+              Select Stay
             </label>
             <div className="mt-2">
               <Select
                 className="placeholder:text-md text-sm outline-none border-none"
-                id="service"
-                options={serviceOptions}
+                id="stay"
+                options={stayOptions}
                 onChange={(selectedValue) =>
-                  handleSelectChange(selectedValue, "service")
+                  handleSelectChange(selectedValue, "stay")
                 }
               />
             </div>
           </div>
 
+          <div className="flex gap-2 w-full items-center">
+            <div className="w-[50%]">
+              <DateSelect
+                date={dateValue}
+                setDate={setDateValue}
+                label={"Date of Arrival"}
+              />
+            </div>
+            <div className="w-[50%]">
+              <SearchSelect
+                label={"Time for arrival"}
+                placeholder={"select time... "}
+                data={times}
+                value={timeValue}
+                setValue={setTimeValue}
+                icon={Calendar}
+                open={openTime}
+                setOpen={setOpenTime}
+              />
+            </div>
+          </div>
+
           <div className="w-full">
+            <InputField
+              form={form}
+              name="pax"
+              label="Enter Pax"
+              placeholder="pax..."
+              desc=" This is your public display service."
+            />
+          </div>
+
+          <div className="w-full">
+            <InputField
+              form={form}
+              name="amount"
+              label="Enter Amount"
+              placeholder="Amount..."
+              desc=" This is your public display service."
+            />
+          </div>
+
+          <div className="flex gap-2 w-full items-center">
+            <div className="w-[50%]">
+              <label className="text-sm font-medium " htmlFor="hotel">
+                No Complimentry
+              </label>
+              <div className="mt-2">
+                <Select
+                  className="placeholder:text-md text-sm outline-none border-none"
+                  id="complimentary"
+                  options={baseOptions}
+                  onChange={(selectedValue) =>
+                    handleSelectChange(selectedValue, "complimentary")
+                  }
+                />
+              </div>
+            </div>
+            <div className="w-[50%]">
+              <label className="text-sm font-medium " htmlFor="service">
+                Paid Service
+              </label>
+              <div className="mt-2">
+                <Select
+                  className="placeholder:text-md text-sm outline-none border-none"
+                  id="service"
+                  options={baseOptions}
+                  onChange={(selectedValue) =>
+                    handleSelectChange(selectedValue, "service")
+                  }
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="w-full">
+            <Label htmlFor="remark">Remarks</Label>
+            <Textarea
+              value={remark}
+              onChange={(e) => setRemark(e.target.value)}
+              className="mt-2"
+              placeholder="Remarks"
+            />
+          </div>
+
+          {/* <div className="w-full">
             <label className="text-sm font-medium " htmlFor="hotel">
               AC/NON_AC
             </label>
@@ -163,7 +269,7 @@ const DiscountedModal: FC<CruiseModalProps> = ({
                 }
               />
             </div>
-          </div>
+          </div> */}
 
           <Button type="submit">Submit</Button>
         </form>

@@ -64,6 +64,7 @@ model Guest {
   itinerary Itinerary[]
   roomBooking RoomBooking[]
   cruise Cruise[]
+  discount Discount[]
   vehical Vehical[]
 }
 
@@ -153,6 +154,20 @@ model Vehical {
      service String?
      ac_nonac String?
      vehical_type String?
+     guestId String @db.ObjectId
+     guest Guest @relation( fields: [guestId] ,  references: [id] )
+}
+
+
+model Discount {
+     id      String @id  @default(auto())  @map("_id") @db.ObjectId
+     Activies String?
+     complimentary Boolean?
+     remark String?
+     vehical_type String?
+     service Boolean?
+     amount String?
+     pax String?
      guestId String @db.ObjectId
      guest Guest @relation( fields: [guestId] ,  references: [id] )
 }

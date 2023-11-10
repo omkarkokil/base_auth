@@ -73,7 +73,7 @@ const SearchSelect: FC<SelectProps> = ({
           <PopoverContent className="w-full  bg-white p-0">
             <Command className="w-full  ">
               <CommandInput className="w-full" placeholder={placeholder} />
-              <CommandEmpty>driver not found.</CommandEmpty>
+              <CommandEmpty>data not found.</CommandEmpty>
               <CommandGroup className="w-full max-h-72 overflow-y-auto">
                 {data.map((item) => (
                   <CommandItem
@@ -84,7 +84,7 @@ const SearchSelect: FC<SelectProps> = ({
                       setOpen(false);
                     }}
                   >
-                   {Icon && <Icon className="h-4 mr-2" />}
+                    {Icon && <Icon className="h-4 mr-2" />}
                     {item}
                   </CommandItem>
                 ))}

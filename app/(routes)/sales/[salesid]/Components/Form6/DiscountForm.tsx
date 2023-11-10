@@ -74,49 +74,119 @@ const DiscountedForm: React.FC<CruiseProps> = ({ id }) => {
 
   const columns: ColumnDef<VehicalFormProps>[] = [
     {
-      accessorKey: "place",
-      header: () => <div className="text-left">Place</div>,
+      accessorKey: "Activies",
+      header: () => <div className="text-left">Activity</div>,
       cell: ({ row }) => {
         return (
           <div className="flex items-center  gap-2">
             <div className="text-center font-medium">
-              {row.getValue("place")}
+              {row.getValue("Activies")}
             </div>
           </div>
         );
       },
-    },
-    {
-      accessorKey: "service",
-      header: "Service",
-      cell: ({ row }) => (
-        <div className="flex items-center gap-2">
-          <div>{row.getValue("service")}</div>
-        </div>
-      ),
     },
 
     {
-      accessorKey: "ac_nonac",
-      header: () => <div className="text-left">AC/NON AC</div>,
+      accessorKey: "stay",
+      header: () => <div className="text-left">Stay</div>,
       cell: ({ row }) => {
         return (
           <div className="flex items-center  gap-2">
             <div className="text-center font-medium">
-              {row.getValue("ac_nonac")}
+              {row.getValue("stay")}
+            </div>
+          </div>
+        );
+      },
+    },
+
+    {
+      accessorKey: "arrival",
+      header: () => <div className="text-left">Arrival date</div>,
+      cell: ({ row }) => {
+        return (
+          <div className="flex items-center  gap-2">
+            <div className="text-center font-medium">
+              {format(new Date(row.getValue("arrival")), "PP")}
             </div>
           </div>
         );
       },
     },
     {
-      accessorKey: "vehical_type",
-      header: () => <div className="text-left">Vehical Type</div>,
+      accessorKey: "time",
+      header: () => <div className="text-left">Arrival Time</div>,
       cell: ({ row }) => {
         return (
           <div className="flex items-center  gap-2">
             <div className="text-center font-medium">
-              {row.getValue("vehical_type")}
+              {row.getValue("time")}
+            </div>
+          </div>
+        );
+      },
+    },
+
+    {
+      accessorKey: "service",
+      header: () => <div className="text-left">Service</div>,
+      cell: ({ row }) => {
+        return (
+          <div className="flex items-center  gap-2">
+            <div className="text-center font-medium">
+              {row.getValue("service") === true ? "yes" : "no"}
+            </div>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "complimentary",
+      header: () => <div className="text-left">Complimentary</div>,
+      cell: ({ row }) => {
+        return (
+          <div className="flex items-center  gap-2">
+            <div className="text-center font-medium">
+              {row.getValue("complimentary") === true ? "yes" : "no"}
+            </div>
+          </div>
+        );
+      },
+    },
+
+    {
+      accessorKey: "pax",
+      header: () => <div className="text-left">Pax</div>,
+      cell: ({ row }) => {
+        return (
+          <div className="flex items-center  gap-2">
+            <div className="text-center font-medium">{row.getValue("pax")}</div>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "amount",
+      header: () => <div className="text-left">Amount</div>,
+      cell: ({ row }) => {
+        return (
+          <div className="flex items-center  gap-2">
+            <div className="text-center font-medium">
+              {row.getValue("amount")}
+            </div>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "remark",
+      header: () => <div className="text-left">Remarks</div>,
+      cell: ({ row }) => {
+        return (
+          <div className="flex items-center  gap-2">
+            <div className="text-center font-medium">
+              {row.getValue("remark")}
             </div>
           </div>
         );
@@ -185,7 +255,7 @@ const DiscountedForm: React.FC<CruiseProps> = ({ id }) => {
         guestId: id,
       };
 
-      const res = await fetch("/api/guest/vehical", {
+      const res = await fetch("/api/guest/discount", {
         method: "POST",
         body:
           data.length > 0
