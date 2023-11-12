@@ -17,6 +17,12 @@ export async function DELETE(request: Request, { params }: { params: IParams }) 
 
         await prisma.guestInfo.deleteMany({ where: { guestId: params.id } });
         await prisma.itinerary.deleteMany({ where: { guestId: params.id } });
+        await prisma.roomBooking.deleteMany({ where: { guestId: params.id } });
+        await prisma.cruise.deleteMany({ where: { guestId: params.id } });
+        await prisma.vehical.deleteMany({ where: { guestId: params.id } });
+        await prisma.flight.deleteMany({ where: { guestId: params.id } });
+        await prisma.fiberboat.deleteMany({ where: { guestId: params.id } });
+        await prisma.discount.deleteMany({ where: { guestId: params.id } });
 
         const deleteUser = await prisma.guest.deleteMany({
             where: {

@@ -59,14 +59,14 @@ const page = async ({ params }: { params: IParams }) => {
     {
       id: params.salesid,
       sr: 7,
-      status: false,
+      status: guestUser && guestUser?.flight?.length <= 0 ? false : true,
       Stages: "Flight Details Form",
       href: `/sales/${params.salesid}/FilghtDetails`,
     },
     {
       id: params.salesid,
       sr: 8,
-      status: false,
+      status: guestUser && guestUser.fiberboat.length <= 0 ? false : true,
       Stages: "Fiber Boat Requisition Form",
       href: `/sales/${params.salesid}/FiberBoat`,
     },

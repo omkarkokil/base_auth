@@ -472,7 +472,7 @@ const SalesForm: FC<IdProps> = ({ id }) => {
           state={inputValues}
           total={total}
         />
-        <Indicator />
+        {/* <Indicator /> */}
       </section>
     </>
   );

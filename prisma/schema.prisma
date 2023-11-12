@@ -66,6 +66,8 @@ model Guest {
   cruise Cruise[]
   discount Discount[]
   vehical Vehical[]
+  flight Flight[]
+  fiberboat Fiberboat[]
 }
 
 enum channel{
@@ -162,12 +164,38 @@ model Vehical {
 model Discount {
      id      String @id  @default(auto())  @map("_id") @db.ObjectId
      Activies String?
+     time String?
+     date String?
      complimentary Boolean?
      remark String?
      vehical_type String?
      service Boolean?
      amount String?
      pax String?
+     guestId String @db.ObjectId
+     guest Guest @relation( fields: [guestId] ,  references: [id] )
+}
+
+model Flight {
+     id      String @id  @default(auto())  @map("_id") @db.ObjectId
+     time String?
+     arrival String?
+     flightno String?
+     deptcity String?
+     arrivalcity String?
+     PNR String?
+     guestId String @db.ObjectId
+     guest Guest @relation( fields: [guestId] ,  references: [id] )
+}
+
+
+model Fiberboat {
+     id      String @id  @default(auto())  @map("_id") @db.ObjectId
+     time String?
+     arrival String?
+     stay String?
+     service String?
+     boattype String?
      guestId String @db.ObjectId
      guest Guest @relation( fields: [guestId] ,  references: [id] )
 }

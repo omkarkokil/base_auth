@@ -24,6 +24,7 @@ import {
   ChevronDown,
   MoreHorizontal,
   Palmtree,
+  Plane,
   Ship,
   Timer,
   TramFront,
@@ -60,12 +61,13 @@ import { useRouter } from "next/navigation";
 import { VehicalFormProps } from "../../Vehical/page";
 import VehicalModal from "@/components/Custom/Modal/Sales/Vehical/VehicalModal";
 import DiscountedModal from "@/components/Custom/Modal/Sales/Discounted/DiscountedModal";
+import FlightModal from "@/components/Custom/Modal/Sales/Flight/FlightModal";
 
 interface CruiseProps {
   id: string;
 }
 
-const DiscountedForm: React.FC<CruiseProps> = ({ id }) => {
+const FlightForm: React.FC<CruiseProps> = ({ id }) => {
   const router = useRouter();
 
   const [open, setOpen] = useState(false);
@@ -74,36 +76,8 @@ const DiscountedForm: React.FC<CruiseProps> = ({ id }) => {
 
   const columns: ColumnDef<VehicalFormProps>[] = [
     {
-      accessorKey: "Activies",
-      header: () => <div className="text-left">Activity</div>,
-      cell: ({ row }) => {
-        return (
-          <div className="flex items-center  gap-2">
-            <div className="text-center font-medium">
-              {row.getValue("Activies")}
-            </div>
-          </div>
-        );
-      },
-    },
-
-    {
-      accessorKey: "stay",
-      header: () => <div className="text-left">Stay</div>,
-      cell: ({ row }) => {
-        return (
-          <div className="flex items-center  gap-2">
-            <div className="text-center font-medium">
-              {row.getValue("stay")}
-            </div>
-          </div>
-        );
-      },
-    },
-
-    {
       accessorKey: "arrival",
-      header: () => <div className="text-left">Arrival date</div>,
+      header: () => <div className="text-left">Activity</div>,
       cell: ({ row }) => {
         return (
           <div className="flex items-center  gap-2">
@@ -114,9 +88,10 @@ const DiscountedForm: React.FC<CruiseProps> = ({ id }) => {
         );
       },
     },
+
     {
       accessorKey: "time",
-      header: () => <div className="text-left">Arrival Time</div>,
+      header: () => <div className="text-left">Flight Time</div>,
       cell: ({ row }) => {
         return (
           <div className="flex items-center  gap-2">
@@ -129,103 +104,56 @@ const DiscountedForm: React.FC<CruiseProps> = ({ id }) => {
     },
 
     {
-      accessorKey: "service",
-      header: () => <div className="text-left">Service</div>,
+      accessorKey: "flightno",
+      header: () => <div className="text-left">Flight No</div>,
       cell: ({ row }) => {
         return (
           <div className="flex items-center  gap-2">
             <div className="text-center font-medium">
-              {row.getValue("service") === true ? "yes" : "no"}
+              {row.getValue("flightno")}
             </div>
           </div>
         );
       },
     },
     {
-      accessorKey: "complimentary",
-      header: () => <div className="text-left">Complimentary</div>,
+      accessorKey: "deptcity",
+      header: () => <div className="text-left">Dept City</div>,
       cell: ({ row }) => {
         return (
           <div className="flex items-center  gap-2">
             <div className="text-center font-medium">
-              {row.getValue("complimentary") === true ? "yes" : "no"}
-            </div>
-          </div>
-        );
-      },
-    },
-
-    {
-      accessorKey: "pax",
-      header: () => <div className="text-left">Pax</div>,
-      cell: ({ row }) => {
-        return (
-          <div className="flex items-center  gap-2">
-            <div className="text-center font-medium">{row.getValue("pax")}</div>
-          </div>
-        );
-      },
-    },
-    {
-      accessorKey: "amount",
-      header: () => <div className="text-left">Amount</div>,
-      cell: ({ row }) => {
-        return (
-          <div className="flex items-center  gap-2">
-            <div className="text-center font-medium">
-              {row.getValue("amount")}
-            </div>
-          </div>
-        );
-      },
-    },
-    {
-      accessorKey: "remark",
-      header: () => <div className="text-left">Remarks</div>,
-      cell: ({ row }) => {
-        return (
-          <div className="flex items-center  gap-2">
-            <div className="text-center font-medium">
-              {row.getValue("remark")}
+              {row.getValue("deptcity")}
             </div>
           </div>
         );
       },
     },
 
-    // {
-    //   id: "actions",
-    //   enableHiding: false,
-    //   cell: ({ row }) => {
-    //     return (
-    //       <Dialog open={open} onOpenChange={setOpen}>
-    //         <DropdownMenu>
-    //           <DropdownMenuTrigger asChild>
-    //             <Button variant="ghost" className="h-8 w-8 p-0">
-    //               <span className="sr-only ">Open menu</span>
-    //               <MoreHorizontal className="h-4 w-4" />
-    //             </Button>
-    //           </DropdownMenuTrigger>
-    //           <DropdownMenuContent align="end">
-    //             <DropdownMenuLabel>Add Actions</DropdownMenuLabel>
-    //             <DropdownMenuItem className="pr-10 cursor-pointer hover:!bg-primary hover:!text-white">
-    //               <UserPlus2 className="mr-2 h-4 w-4" />
-    //               <span>Add form data</span>
-    //             </DropdownMenuItem>
-
-    //             <DropdownMenuItem
-    //               //   onClick={() => DeleteGuest()}
-    //               className="pr-10 cursor-pointer hover:!bg-danger hover:!text-white"
-    //             >
-    //               <Trash2 className="mr-2 h-4 w-4" />
-    //               Delete Guest data
-    //             </DropdownMenuItem>
-    //           </DropdownMenuContent>
-    //         </DropdownMenu>
-    //       </Dialog>
-    //     );
-    //   },
-    // },
+    {
+      accessorKey: "PNR",
+      header: () => <div className="text-left">PNR</div>,
+      cell: ({ row }) => {
+        return (
+          <div className="flex items-center  gap-2">
+            <div className="text-center font-medium">{row.getValue("PNR")}</div>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "arrivalcity",
+      header: () => <div className="text-left">Arrival city</div>,
+      cell: ({ row }) => {
+        return (
+          <div className="flex items-center  gap-2">
+            <div className="text-center font-medium">
+              {row.getValue("arrivalcity")}
+            </div>
+          </div>
+        );
+      },
+    },
   ];
 
   const [columnVisibility, setColumnVisibility] =
@@ -255,7 +183,7 @@ const DiscountedForm: React.FC<CruiseProps> = ({ id }) => {
         guestId: id,
       };
 
-      const res = await fetch("/api/guest/discount", {
+      const res = await fetch("/api/guest/flight", {
         method: "POST",
         body:
           data.length > 0
@@ -272,7 +200,7 @@ const DiscountedForm: React.FC<CruiseProps> = ({ id }) => {
       }
 
       if (res.ok) {
-        router.push(`/sales/${id}/FilghtDetails`);
+        router.push(`/sales/${id}/FiberBoat`);
         alert("succcess");
       }
       if (!res.ok) {
@@ -288,26 +216,18 @@ const DiscountedForm: React.FC<CruiseProps> = ({ id }) => {
   return (
     <div className="w-full ">
       <div className="flex w-full justify-end items-center py-4">
-        {/* <Input
-          placeholder="Filter by tourist name..."
-          autoComplete="off"
-          autoCorrect="off"
-          className="max-w-sm"
-        /> */}
-
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button type="button" className="bg-primary gap-2 hover:bg-primary">
-              <BadgeDollarSign /> Add Complimentary / Discounted requisition
+              <Plane /> Flight details form
             </Button>
           </DialogTrigger>
-          <DiscountedModal
+          <FlightModal
             open={open}
             id={id}
             setOpen={setOpen}
             setData={setData}
           />
-          {/* <SalesGuestModal open={open} setOpen={setOpen} /> */}
         </Dialog>
       </div>
 
@@ -356,17 +276,15 @@ const DiscountedForm: React.FC<CruiseProps> = ({ id }) => {
                   className="h-24 p-0 text-center"
                 >
                   <div className="flex bg-[#dcfce7] rounded-md p-8  shadow-md   gap-4 w-full ">
-                    <BadgeDollarSign className="h-12 w-12 text-success" />
+                    <Plane className="h-12 w-12 text-success" />
                     <div className="flex flex-col items-start">
                       <h1 className="text-2xl pb-2 font-semibold text-success">
-                        Create Complimentary / Discounted Activities requisition
-                        / This also can be empty
+                        Create Filght details / This also can be empty
                       </h1>
                       <p className="font-medium text-left text-sm  text-success">
-                        Please create Complimentary / Discounted first by using
-                        add new Complimentary / Discounted requisition button
-                        for preview if no Complimentary / Discounted also click
-                        next step to got to next one
+                        Please create Flight details first by using add new
+                        Flight details requisition button for preview if no
+                        Flight details also click next step to got to next one
                       </p>
                     </div>
                   </div>
@@ -399,4 +317,4 @@ const DiscountedForm: React.FC<CruiseProps> = ({ id }) => {
   );
 };
 
-export default DiscountedForm;
+export default FlightForm;

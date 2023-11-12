@@ -67,14 +67,24 @@ export const RoomBookingForm: FC<ItenaryInputProps> = ({
 
   const onSubmit = async () => {
     setIsLoading(true);
-    const mandatoryFields = [
-      "seat_class",
-      "PNR",
-      "time",
-      "route",
-      "cruise",
-      "journeyDate",
-    ];
+    // const mandatoryFields = [
+    //   "seat_class",
+    //   "PNR",
+    //   "time",
+    //   "route",
+    //   "cruise",
+    //   "journeyDate",
+    // ];
+
+    const hasEmptyValue = data.some((obj) => {
+      return Object.values(obj).some((value) => value === "");
+    });
+
+    if (hasEmptyValue) {
+      alert("All Field are mandatory");
+      setIsLoading(false);
+      return false;
+    }
 
     try {
       const res = await fetch("/api/guest/roombooking", {

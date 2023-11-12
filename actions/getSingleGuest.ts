@@ -25,7 +25,9 @@ export const getSingleGuest = async (id: string | undefined) => {
                 roomBooking: true,
                 cruise: true,
                 vehical: true,
-                discount: true
+                discount: true,
+                flight: true,
+                fiberboat: true,
             }
         })
         return guest;
